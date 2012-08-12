@@ -1,33 +1,16 @@
 package main
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
 	"fmt"
 	"log"
 	"net/http"
 	"time"
+	nimbusiohttp "nimbusio/http"
 )
-
-type Credentials struct {
-	name      string
-	authKeyId int
-	authKey   []byte
-}
-
-func ComputeAuthString(credentials *Credentials, method string, timestamp int64,
-	uri string) string {
-
-	message := fmt.Sprintf("%s\n%s\n%d\n%s\n", credentials.name, method,
-		timestamp, uri)
-	h := hmac.New(sha256.New, credentials.authKey)
-	h.Write([]byte(message))
-	return fmt.Sprintf("NIMBUS.IO %d:%x", credentials.authKeyId, h.Sum(nil))
-}
 
 func main() {
 	fmt.Println("start")
-	credentials := Credentials{}
+	credentials := nimbusiohttp.Credentials{}
 	method := "GET"
 	current_time := time.Now()
 	timestamp := current_time.Unix()
@@ -41,7 +24,8 @@ func main() {
 	}
 	fmt.Printf("req = %v\n", req)
 
-	authString := ComputeAuthString(&credentials, method, timestamp, uri)
+	authString := nimbusiohttp.ComputeAuthString(&credentials, method, timestamp, 
+		uri)
 	req.Header.Add("Authorization", authString)
 	req.Header.Add("x-nimbus-io-timestamp", string(timestamp))
 	req.Header.Add("agent", "gonimbusio/1.0")
