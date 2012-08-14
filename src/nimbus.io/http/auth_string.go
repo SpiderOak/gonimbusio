@@ -9,7 +9,7 @@ import (
 func ComputeAuthString(credentials *Credentials, method string, timestamp int64,
 	uri string) string {
 
-	message := fmt.Sprintf("%s\n%s\n%d\n%s\n", credentials.name, method,
+	message := fmt.Sprintf("%s\n%s\n%d\n%s", credentials.name, method,
 		timestamp, uri)
 	h := hmac.New(sha256.New, credentials.authKey)
 	h.Write([]byte(message))

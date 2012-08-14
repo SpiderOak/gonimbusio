@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"time"
-	nimbusiohttp "nimbusio/http"
+	nimbusiohttp "nimbus.io/http"
 )
 
 func main() {
