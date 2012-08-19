@@ -1,16 +1,30 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 	nimbusiohttp "nimbus.io/http"
+	"time"
 )
 
 func main() {
 	fmt.Println("start")
-	credentials := nimbusiohttp.Credentials{}
+	var credentials *nimbusiohttp.Credentials
+	var err error
+
+	sp := flag.String("credentials", "", "path to credentials file")
+	flag.Parse()
+	if *sp == "" {
+		credentials, err = nimbusiohttp.LoadCredentialsFromDefault()
+	} else {
+		credentials, err = nimbusiohttp.LoadCredentialsFromPath(*sp)
+	}
+	if err != nil {
+		log.Fatalf("Error loading credentials %s\n", err)
+	}
+
 	method := "GET"
 	current_time := time.Now()
 	timestamp := current_time.Unix()
@@ -24,7 +38,7 @@ func main() {
 	}
 	fmt.Printf("req = %v\n", req)
 
-	authString := nimbusiohttp.ComputeAuthString(&credentials, method, timestamp, 
+	authString := nimbusiohttp.ComputeAuthString(credentials, method, timestamp,
 		uri)
 	req.Header.Add("Authorization", authString)
 	req.Header.Add("x-nimbus-io-timestamp", string(timestamp))

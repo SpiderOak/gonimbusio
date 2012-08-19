@@ -5,6 +5,9 @@ import (
 	"bytes"
 	"errors"
 	"io"
+	"os"
+	"os/user"
+	"path"
 	"strconv"
 	"strings"
 )
@@ -15,13 +18,15 @@ type Credentials struct {
 	authKey   []byte
 }
 
+const credentialsFileName = ".nimbus.io"
+
 func (credentials *Credentials) Equal(other *Credentials) bool {
 	return credentials.name == other.name &&
 		credentials.authKeyId == other.authKeyId &&
 		bytes.Equal(credentials.authKey, other.authKey)
 }
 
-func LoadCredentials(reader io.Reader) (*Credentials, error) {
+func loadCredentials(reader io.Reader) (*Credentials, error) {
 	var line string
 	var err error
 	var fields []string
@@ -63,4 +68,22 @@ func LoadCredentials(reader io.Reader) (*Credentials, error) {
 	credentials.authKey = []byte(fields[1])
 
 	return &credentials, nil 
+}
+
+func LoadCredentialsFromPath(path string) (*Credentials, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	return loadCredentials(file)
+}
+
+func LoadCredentialsFromDefault() (*Credentials, error) {
+	userRec, err := user.Current()
+	if err != nil {
+		return nil, err
+	}
+	credentialsPath := path.Join(userRec.HomeDir, credentialsFileName)
+	return LoadCredentialsFromPath(credentialsPath)	 
 }
