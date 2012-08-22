@@ -9,6 +9,10 @@ import (
 	"time"
 )
 
+const (
+	base_address = "dev.nimbus.io:9000"
+)
+
 func main() {
 	fmt.Println("start")
 	var credentials *nimbusiohttp.Credentials
@@ -28,7 +32,8 @@ func main() {
 	method := "GET"
 	current_time := time.Now()
 	timestamp := current_time.Unix()
-	uri := "http://dev.nimbus.io:9000/customers/xxx/collections"
+	base_uri := fmt.Sprintf("/customers/%s/collections", credentials.Name)
+	uri := fmt.Sprintf("http://%s%s", base_address, base_uri)
 
 	client := &http.Client{}
 
@@ -39,9 +44,9 @@ func main() {
 	fmt.Printf("req = %v\n", req)
 
 	authString := nimbusiohttp.ComputeAuthString(credentials, method, timestamp,
-		uri)
+		base_uri)
 	req.Header.Add("Authorization", authString)
-	req.Header.Add("x-nimbus-io-timestamp", string(timestamp))
+	req.Header.Add("x-nimbus-io-timestamp", fmt.Sprintf("%d", timestamp))
 	req.Header.Add("agent", "gonimbusio/1.0")
 
 	resp, err := client.Do(req)
