@@ -13,17 +13,17 @@ import (
 )
 
 type Credentials struct {
-	name      string
-	authKeyId int
-	authKey   []byte
+	Name      string
+	AuthKeyId int
+	AuthKey   []byte
 }
 
 const credentialsFileName = ".nimbus.io"
 
 func (credentials *Credentials) Equal(other *Credentials) bool {
-	return credentials.name == other.name &&
-		credentials.authKeyId == other.authKeyId &&
-		bytes.Equal(credentials.authKey, other.authKey)
+	return credentials.Name == other.Name &&
+		credentials.AuthKeyId == other.AuthKeyId &&
+		bytes.Equal(credentials.AuthKey, other.AuthKey)
 }
 
 func loadCredentials(reader io.Reader) (*Credentials, error) {
@@ -42,7 +42,7 @@ func loadCredentials(reader io.Reader) (*Credentials, error) {
 	if len(fields) != 2 || fields[0] != "Username" {
 		return nil, errors.New("can't parse Username")
 	}
-	credentials.name = fields[1]
+	credentials.Name = fields[1]
 
 	line, err = bufferedReader.ReadString('\n')
 	if err != nil {
@@ -52,7 +52,7 @@ func loadCredentials(reader io.Reader) (*Credentials, error) {
 	if len(fields) != 2 || fields[0] != "AuthKeyId" {
 		return nil, errors.New("can't parse AuthKeyId")
 	}
-	credentials.authKeyId, err = strconv.Atoi(fields[1])
+	credentials.AuthKeyId, err = strconv.Atoi(fields[1])
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func loadCredentials(reader io.Reader) (*Credentials, error) {
 	if len(fields) != 2 || fields[0] != "AuthKey" {
 		return nil, errors.New("can't parse AuthKey")
 	}
-	credentials.authKey = []byte(fields[1])
+	credentials.AuthKey = []byte(fields[1])
 
 	return &credentials, nil 
 }
