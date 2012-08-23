@@ -6,11 +6,10 @@ import (
 	"log"
 	"net/http"
 	nimbusiohttp "nimbus.io/http"
-	"time"
 )
 
 const (
-	base_address = "dev.nimbus.io:9000"
+	baseAddress = "dev.nimbus.io:9000"
 )
 
 func main() {
@@ -29,32 +28,17 @@ func main() {
 		log.Fatalf("Error loading credentials %s\n", err)
 	}
 
+	client := nimbusiohttp.NewClient(credentials, baseAddress)
+
 	method := "GET"
-	current_time := time.Now()
-	timestamp := current_time.Unix()
-	base_uri := fmt.Sprintf("/customers/%s/collections", credentials.Name)
-	uri := fmt.Sprintf("http://%s%s", base_address, base_uri)
+	baseURI := fmt.Sprintf("/customers/%s/collections", credentials.Name)
 
-	client := &http.Client{}
+	response, err = client.Request(method, baseURI)
 
-	req, err := http.NewRequest("GET", uri, nil)
 	if err != nil {
-		log.Fatalf("NewRequest failed %s\n", err)
+		log.Fatalf("Request failed %s\n", err)
 	}
-	fmt.Printf("req = %v\n", req)
-
-	authString := nimbusiohttp.ComputeAuthString(credentials, method, timestamp,
-		base_uri)
-	req.Header.Add("Authorization", authString)
-	req.Header.Add("x-nimbus-io-timestamp", fmt.Sprintf("%d", timestamp))
-	req.Header.Add("agent", "gonimbusio/1.0")
-
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatalf("DO failed %s\n", err)
-	}
-	defer resp.Body.Close()
-	fmt.Printf("resp = %v\n", resp)
+	fmt.Printf("response = %v\n", response)
 
 	//body, err := ioutil.ReadAll(resp.Body)
 	fmt.Println("end")
