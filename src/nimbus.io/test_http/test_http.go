@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net/http"
 	nimbusiohttp "nimbus.io/http"
 )
 
@@ -16,6 +15,7 @@ func main() {
 	fmt.Println("start")
 	var credentials *nimbusiohttp.Credentials
 	var err error
+	var collectionList []nimbusiohttp.Collection
 
 	sp := flag.String("credentials", "", "path to credentials file")
 	flag.Parse()
@@ -28,17 +28,12 @@ func main() {
 		log.Fatalf("Error loading credentials %s\n", err)
 	}
 
-	client := nimbusiohttp.NewClient(credentials, baseAddress)
-
-	method := "GET"
-	baseURI := fmt.Sprintf("/customers/%s/collections", credentials.Name)
-
-	response, err = client.Request(method, baseURI)
-
+	requester := nimbusiohttp.NewRequester(credentials, baseAddress)
+	collectionList, err = nimbusiohttp.ListCollections(requester, credentials)
 	if err != nil {
 		log.Fatalf("Request failed %s\n", err)
 	}
-	fmt.Printf("response = %v\n", response)
+	fmt.Printf("response = %v\n", collectionList)
 
 	//body, err := ioutil.ReadAll(resp.Body)
 	fmt.Println("end")

@@ -7,10 +7,14 @@ import (
 	"time"
 )
 
-type Client struct {
+type client struct {
 	credentials *Credentials
 	httpClient  *http.Client
 	baseAddress string
+}
+
+type Requester interface {
+	Request(method string, baseURI string) (*Response, error)
 }
 
 type Response struct {
@@ -19,15 +23,15 @@ type Response struct {
 	Body       []byte
 }
 
-func NewClient(credentials *Credentials, baseAddress string) *Client {
-	return &Client{
+func NewRequester(credentials *Credentials, baseAddress string) Requester {
+	return &client{
 		credentials,
 		&http.Client{},
 		baseAddress,
 	}
 }
 
-func (client *Client) Request(method string, baseURI string) (*Response, error) {
+func (client *client) Request(method string, baseURI string) (*Response, error) {
 	var err error
 
 	current_time := time.Now()
