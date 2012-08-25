@@ -15,7 +15,6 @@ func main() {
 	fmt.Println("start")
 	var credentials *nimbusiohttp.Credentials
 	var err error
-	var collectionList []nimbusiohttp.Collection
 
 	sp := flag.String("credentials", "", "path to credentials file")
 	flag.Parse()
@@ -29,7 +28,7 @@ func main() {
 	}
 
 	requester := nimbusiohttp.NewRequester(credentials, baseAddress)
-	collectionList, err = nimbusiohttp.ListCollections(requester, credentials)
+	collectionList, err := nimbusiohttp.ListCollections(requester, credentials)
 	if err != nil {
 		log.Fatalf("Request failed %s\n", err)
 	}

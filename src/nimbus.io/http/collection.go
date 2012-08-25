@@ -14,17 +14,11 @@ type Collection struct {
 
 func ListCollections(requester Requester, credentials *Credentials) (
 	[]Collection, error) {
-	var response *Response
-	var err error
-	var result []Collection
-	var rawSlice []map[string]interface{}
 
 	method := "GET"
 	baseURI := fmt.Sprintf("/customers/%s/collections", credentials.Name)
 
-	response, err = requester.Request(method, baseURI)
-
-	if err != nil {
+	response, err := requester.Request(method, baseURI); if err != nil {
 		return nil, err
 	}
 
@@ -34,16 +28,16 @@ func ListCollections(requester Requester, credentials *Credentials) (
 		return nil, err
 	}
 
-	err = json.Unmarshal(response.Body, &rawSlice)
-    if err != nil {
+	var rawSlice []map[string]interface{}
+	err = json.Unmarshal(response.Body, &rawSlice); if err != nil {
         return nil, err
     }
 
+    var result []Collection
     for _, rawMap := range rawSlice {
     	name := rawMap["name"].(string)
     	creationTime, err := time.Parse(time.RFC1123, 
-    		rawMap["creation-time"].(string))
-    	if err != nil {
+    		rawMap["creation-time"].(string)); if err != nil {
     		return nil, err
     	}
     	versioning := rawMap["versioning"].(bool)

@@ -27,38 +27,30 @@ func (credentials *Credentials) Equal(other *Credentials) bool {
 }
 
 func loadCredentials(reader io.Reader) (*Credentials, error) {
-	var line string
-	var err error
-	var fields []string
-
 	credentials := Credentials{}
 	bufferedReader := bufio.NewReader(reader)
 
-	line, err = bufferedReader.ReadString('\n')
-	if err != nil {
+	line, err := bufferedReader.ReadString('\n'); if err != nil {
 		return nil, err
 	}
-	fields = strings.Fields(line)
+	fields := strings.Fields(line)
 	if len(fields) != 2 || fields[0] != "Username" {
 		return nil, errors.New("can't parse Username")
 	}
 	credentials.Name = fields[1]
 
-	line, err = bufferedReader.ReadString('\n')
-	if err != nil {
+	line, err = bufferedReader.ReadString('\n'); if err != nil {
 		return nil, err
 	}
 	fields = strings.Fields(line)
 	if len(fields) != 2 || fields[0] != "AuthKeyId" {
 		return nil, errors.New("can't parse AuthKeyId")
 	}
-	credentials.AuthKeyId, err = strconv.Atoi(fields[1])
-	if err != nil {
+	credentials.AuthKeyId, err = strconv.Atoi(fields[1]); if err != nil {
 		return nil, err
 	}
 
-	line, err = bufferedReader.ReadString('\n')
-	if err != nil {
+	line, err = bufferedReader.ReadString('\n'); if err != nil {
 		return nil, err
 	}
 	fields = strings.Fields(line)
@@ -71,8 +63,7 @@ func loadCredentials(reader io.Reader) (*Credentials, error) {
 }
 
 func LoadCredentialsFromPath(path string) (*Credentials, error) {
-	file, err := os.Open(path)
-	if err != nil {
+	file, err := os.Open(path); if err != nil {
 		return nil, err
 	}
 	defer file.Close()
@@ -80,8 +71,7 @@ func LoadCredentialsFromPath(path string) (*Credentials, error) {
 }
 
 func LoadCredentialsFromDefault() (*Credentials, error) {
-	userRec, err := user.Current()
-	if err != nil {
+	userRec, err := user.Current(); if err != nil {
 		return nil, err
 	}
 	credentialsPath := path.Join(userRec.HomeDir, credentialsFileName)

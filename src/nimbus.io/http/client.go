@@ -32,14 +32,12 @@ func NewRequester(credentials *Credentials, baseAddress string) Requester {
 }
 
 func (client *client) Request(method string, baseURI string) (*Response, error) {
-	var err error
 
 	current_time := time.Now()
 	timestamp := current_time.Unix()
 	uri := fmt.Sprintf("http://%s%s", client.baseAddress, baseURI)
 
-	request, err := http.NewRequest(method, uri, nil)
-	if err != nil {
+	request, err := http.NewRequest(method, uri, nil); if err != nil {
 		return nil, err
 	}
 
@@ -49,15 +47,13 @@ func (client *client) Request(method string, baseURI string) (*Response, error) 
 	request.Header.Add("x-nimbus-io-timestamp", fmt.Sprintf("%d", timestamp))
 	request.Header.Add("agent", "gonimbusio/1.0")
 
-	response, err := client.httpClient.Do(request)
-	if err != nil {
+	response, err := client.httpClient.Do(request); if err != nil {
 		return nil, err
 	}
 
 	defer response.Body.Close()
 
-	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
+	body, err := ioutil.ReadAll(response.Body); if err != nil {
 		return nil, err
 	}
 
