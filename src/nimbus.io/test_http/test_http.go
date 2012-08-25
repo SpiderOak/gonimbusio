@@ -35,6 +35,5 @@ func main() {
 	}
 	fmt.Printf("response = %v\n", collectionList)
 
-	//body, err := ioutil.ReadAll(resp.Body)
 	fmt.Println("end")
 }

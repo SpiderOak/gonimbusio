@@ -1,18 +1,23 @@
 package http
 
 import (
+	"encoding/json"
 	"fmt"
+	"time"
 )
 
 type Collection struct {
-	name string 
-	versioned bool
+	Name string 
+	CreationTime time.Time
+	Versioned bool
 }
 
 func ListCollections(requester Requester, credentials *Credentials) (
 	[]Collection, error) {
 	var response *Response
 	var err error
+	var result []Collection
+	var rawSlice []map[string]interface{}
 
 	method := "GET"
 	baseURI := fmt.Sprintf("/customers/%s/collections", credentials.Name)
@@ -29,6 +34,23 @@ func ListCollections(requester Requester, credentials *Credentials) (
 		return nil, err
 	}
 
-	return nil, nil
+	err = json.Unmarshal(response.Body, &rawSlice)
+    if err != nil {
+        return nil, err
+    }
+
+    for _, rawMap := range rawSlice {
+    	name := rawMap["name"].(string)
+    	creationTime, err := time.Parse(time.RFC1123, 
+    		rawMap["creation-time"].(string))
+    	if err != nil {
+    		return nil, err
+    	}
+    	versioning := rawMap["versioning"].(bool)
+    	collection := Collection{name, creationTime, versioning}
+    	result = append(result, collection)
+    }
+
+	return result, nil
 
 }
