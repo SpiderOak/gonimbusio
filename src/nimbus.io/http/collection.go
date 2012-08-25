@@ -16,15 +16,16 @@ func ListCollections(requester Requester, credentials *Credentials) (
 	[]Collection, error) {
 
 	method := "GET"
-	baseURI := fmt.Sprintf("/customers/%s/collections", credentials.Name)
+	hostName := requester.DefaultHostName()
+	path := fmt.Sprintf("/customers/%s/collections", credentials.Name)
 
-	response, err := requester.Request(method, baseURI); if err != nil {
+	response, err := requester.Request(method, hostName, path); if err != nil {
 		return nil, err
 	}
 
 	if response.StatusCode != 200 {
-		err = fmt.Errorf("GET %S failed (%d) %s", baseURI, response.StatusCode, 
-			response.Body)
+		err = fmt.Errorf("GET %s %s failed (%d) %s", hostName, path, 
+			response.StatusCode, response.Body)
 		return nil, err
 	}
 
@@ -48,3 +49,4 @@ func ListCollections(requester Requester, credentials *Credentials) (
 	return result, nil
 
 }
+

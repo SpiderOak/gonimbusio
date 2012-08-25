@@ -7,10 +7,6 @@ import (
 	nimbusiohttp "nimbus.io/http"
 )
 
-const (
-	baseAddress = "dev.nimbus.io:9000"
-)
-
 func main() {
 	fmt.Println("start")
 	var credentials *nimbusiohttp.Credentials
@@ -27,7 +23,10 @@ func main() {
 		log.Fatalf("Error loading credentials %s\n", err)
 	}
 
-	requester := nimbusiohttp.NewRequester(credentials, baseAddress)
+	requester, err := nimbusiohttp.NewRequester(credentials); if err != nil {
+		log.Fatalf("NewRequester failed %s\n", err)
+	}
+
 	collectionList, err := nimbusiohttp.ListCollections(requester, credentials)
 	if err != nil {
 		log.Fatalf("Request failed %s\n", err)
