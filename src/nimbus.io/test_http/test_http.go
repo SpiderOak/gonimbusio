@@ -31,7 +31,23 @@ func main() {
 	if err != nil {
 		log.Fatalf("Request failed %s\n", err)
 	}
-	fmt.Printf("response = %v\n", collectionList)
+	fmt.Printf("starting collection list = %v\n", collectionList)
+
+	collectionName := nimbusiohttp.ReservedCollectionName(credentials.Name, 
+		fmt.Sprintf("test-%05d", len(collectionList)))
+	collection, err := nimbusiohttp.CreateCollection(requester, credentials, 
+		collectionName)
+	if err != nil{
+		log.Fatalf("CreateCollection failed %s\n", err)
+	}
+	fmt.Printf("created collection = %v\n", collection)
+
+	success, err := nimbusiohttp.DeleteCollection(requester, credentials, 
+		collectionName)
+	if err != nil{
+		log.Fatalf("DeleteCollection failed %s\n", err)
+	}
+	fmt.Printf("deleted collection = %s %v\n", collectionName, success)
 
 	fmt.Println("end")
 }
