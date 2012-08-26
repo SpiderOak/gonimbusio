@@ -23,7 +23,8 @@ type client struct {
 
 type Requester interface {
 	DefaultHostName() string
-	Request(method string, hostName string, path string) (*Response, error)
+	Request(method string, hostName string, path string, body io.Reader) (
+		*Response, error)
 }
 
 type Response struct {
@@ -60,14 +61,14 @@ func (client *client) DefaultHostName() string {
 	return fmt.Sprintf("%s:%d", client.serviceDomain, client.servicePort)
 }
 
-func (client *client) Request(method string, hostName string, path string) (
-	*Response, error) {
+func (client *client) Request(method string, hostName string, path string, 
+	body io.Reader) (*Response, error) {
 
 	current_time := time.Now()
 	timestamp := current_time.Unix()
 	uri := fmt.Sprintf("http://%s%s", hostName, path)
 
-	request, err := http.NewRequest(method, uri, nil); if err != nil {
+	request, err := http.NewRequest(method, uri, body); if err != nil {
 		return nil, err
 	}
 

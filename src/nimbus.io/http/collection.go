@@ -45,7 +45,8 @@ func ListCollections(requester Requester, credentials *Credentials) (
 	hostName := requester.DefaultHostName()
 	path := fmt.Sprintf("/customers/%s/collections", credentials.Name)
 
-	response, err := requester.Request(method, hostName, path); if err != nil {
+	response, err := requester.Request(method, hostName, path, nil)
+	if err != nil {
 		return nil, err
 	}
 
@@ -82,7 +83,8 @@ func CreateCollection(requester Requester, credentials *Credentials,
 	hostName := requester.DefaultHostName()
 	path := fmt.Sprintf("/customers/%s/collections?action=create&name=%s", 
 		credentials.Name, collectionName)
-	response, err := requester.Request(method, hostName, path); if err != nil {
+	response, err := requester.Request(method, hostName, path, nil)
+	if err != nil {
 		return nil, err
 	}
 
@@ -116,7 +118,8 @@ func DeleteCollection(requester Requester, credentials *Credentials,
 	hostName := requester.DefaultHostName()
 	path := fmt.Sprintf("/customers/%s/collections/%s", 
 		credentials.Name, collectionName)
-	response, err := requester.Request(method, hostName, path); if err != nil {
+	response, err := requester.Request(method, hostName, path, nil) 
+	if err != nil {
 		return false, err
 	}
 
