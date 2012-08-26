@@ -3,6 +3,8 @@ package http
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"io/ioutil"
 	"time"
 )
 
@@ -47,14 +49,19 @@ func ListCollections(requester Requester, credentials *Credentials) (
 		return nil, err
 	}
 
-	if response.StatusCode != 200 {
+	if response.StatusCode != http.StatusOK {
 		err = fmt.Errorf("GET %s %s failed (%d) %s", hostName, path, 
 			response.StatusCode, response.Body)
 		return nil, err
 	}
 
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body); if err != nil {
+		return nil, err
+	}
+
 	var rawSlice []map[string]interface{}
-	err = json.Unmarshal(response.Body, &rawSlice); if err != nil {
+	err = json.Unmarshal(body, &rawSlice); if err != nil {
         return nil, err
     }
 
@@ -79,14 +86,19 @@ func CreateCollection(requester Requester, credentials *Credentials,
 		return nil, err
 	}
 
-	if response.StatusCode != 201 {
+	if response.StatusCode != http.StatusCreated {
 		err = fmt.Errorf("GET %s %s failed (%d) %s", hostName, path, 
 			response.StatusCode, response.Body)
 		return nil, err
 	}
 
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body); if err != nil {
+		return nil, err
+	}
+
 	var rawMap map[string]interface{}
-	err = json.Unmarshal(response.Body, &rawMap); if err != nil {
+	err = json.Unmarshal(body, &rawMap); if err != nil {
         return nil, err
     }
 
@@ -108,14 +120,19 @@ func DeleteCollection(requester Requester, credentials *Credentials,
 		return false, err
 	}
 
-	if response.StatusCode != 200 {
+	if response.StatusCode != http.StatusOK {
 		err = fmt.Errorf("GET %s %s failed (%d) %s", hostName, path, 
 			response.StatusCode, response.Body)
 		return false, err
 	}
 
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body); if err != nil {
+		return false, err
+	}
+
 	var rawMap map[string]interface{}
-	err = json.Unmarshal(response.Body, &rawMap); if err != nil {
+	err = json.Unmarshal(body, &rawMap); if err != nil {
         return false, err
     }
 

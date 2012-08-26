@@ -2,7 +2,7 @@ package http
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strconv"
@@ -29,7 +29,7 @@ type Requester interface {
 type Response struct {
 	StatusCode int
 	Status     string
-	Body       []byte
+	Body       io.ReadCloser
 }
 
 func NewRequester(credentials *Credentials) (Requester, error) {
@@ -80,11 +80,5 @@ func (client *client) Request(method string, hostName string, path string) (
 		return nil, err
 	}
 
-	defer response.Body.Close()
-
-	body, err := ioutil.ReadAll(response.Body); if err != nil {
-		return nil, err
-	}
-
-	return &Response{response.StatusCode, response.Status, body}, nil
+	return &Response{response.StatusCode, response.Status, response.Body}, nil
 }
