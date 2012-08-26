@@ -3,8 +3,15 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	nimbusiohttp "nimbus.io/http"
+	"strings"
+)
+
+const (
+	testKey = "test key"
+	testBody = "test body"
 )
 
 func main() {
@@ -41,6 +48,28 @@ func main() {
 		log.Fatalf("CreateCollection failed %s\n", err)
 	}
 	fmt.Printf("created collection = %v\n", collection)
+
+	archiveBody := strings.NewReader(testBody)
+	versionIdentifier, err := nimbusiohttp.Archive(requester, credentials, 
+		collectionName, testKey, archiveBody)
+	if err != nil{
+		log.Fatalf("Archive failed %s\n", err)
+	}
+	fmt.Printf("archived key '%s' to version %v\n", testKey, versionIdentifier)
+
+	retrieveBody, err := nimbusiohttp.Retrieve(requester, credentials, 
+		collectionName, testKey)
+	if err != nil{
+		log.Fatalf("Retrieve failed %s\n", err)
+	}
+
+	retrieveResult, err := ioutil.ReadAll(retrieveBody)
+	retrieveBody.Close()
+	if err != nil{
+		log.Fatalf("read failed %s\n", err)
+	}
+	fmt.Printf("retrieved key '%s'; matches testBody = %v\n", testKey, 
+		string(retrieveResult) == testBody)
 
 	success, err := nimbusiohttp.DeleteCollection(requester, credentials, 
 		collectionName)

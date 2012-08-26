@@ -11,18 +11,19 @@ import (
 
 const (
 	defaultServiceDomain = "nimbus.io"
-	defaultServicePort = 443
+	defaultServicePort   = 443
 )
 
 type client struct {
-	credentials *Credentials
-	httpClient  *http.Client
+	credentials   *Credentials
+	httpClient    *http.Client
 	serviceDomain string
-	servicePort int
+	servicePort   int
 }
 
 type Requester interface {
 	DefaultHostName() string
+	CollectionHostName(collectionName string) string
 	Request(method string, hostName string, path string, body io.Reader) (
 		*Response, error)
 }
@@ -43,7 +44,8 @@ func NewRequester(credentials *Credentials) (Requester, error) {
 	if servicePortStr == "" {
 		servicePortStr = fmt.Sprintf("%d", defaultServicePort)
 	}
-	servicePort, err :=  strconv.Atoi(servicePortStr); if err != nil {
+	servicePort, err := strconv.Atoi(servicePortStr)
+	if err != nil {
 		return nil, err
 	}
 
@@ -61,14 +63,19 @@ func (client *client) DefaultHostName() string {
 	return fmt.Sprintf("%s:%d", client.serviceDomain, client.servicePort)
 }
 
-func (client *client) Request(method string, hostName string, path string, 
+func (client *client) CollectionHostName(collectionName string) string {
+	return fmt.Sprintf("%s.%s", collectionName, client.DefaultHostName())
+}
+
+func (client *client) Request(method string, hostName string, path string,
 	body io.Reader) (*Response, error) {
 
 	current_time := time.Now()
 	timestamp := current_time.Unix()
 	uri := fmt.Sprintf("http://%s%s", hostName, path)
 
-	request, err := http.NewRequest(method, uri, body); if err != nil {
+	request, err := http.NewRequest(method, uri, body)
+	if err != nil {
 		return nil, err
 	}
 
@@ -77,7 +84,8 @@ func (client *client) Request(method string, hostName string, path string,
 	request.Header.Add("x-nimbus-io-timestamp", fmt.Sprintf("%d", timestamp))
 	request.Header.Add("agent", "gonimbusio/1.0")
 
-	response, err := client.httpClient.Do(request); if err != nil {
+	response, err := client.httpClient.Do(request)
+	if err != nil {
 		return nil, err
 	}
 
