@@ -49,9 +49,12 @@ func NewRequester(credentials *Credentials) (Requester, error) {
 		return nil, err
 	}
 
+	httpTransport := &http.Transport{DisableKeepAlives : true}
+	httpClient := &http.Client{Transport : httpTransport}
+
 	requester := client{
 		credentials,
-		&http.Client{},
+		httpClient,
 		serviceDomain,
 		servicePort,
 	}
@@ -79,7 +82,10 @@ func (client *client) Request(method string, hostName string, path string,
 		return nil, err
 	}
 
-	authString := ComputeAuthString(client.credentials, method, timestamp, path)
+	authString, err := ComputeAuthString(client.credentials, method, timestamp, 
+		path); if err != nil {
+		return nil, err
+	}
 	request.Header.Add("Authorization", authString)
 	request.Header.Add("x-nimbus-io-timestamp", fmt.Sprintf("%d", timestamp))
 	request.Header.Add("agent", "gonimbusio/1.0")
