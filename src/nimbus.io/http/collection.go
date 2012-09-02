@@ -14,6 +14,12 @@ type Collection struct {
 	Versioned bool
 }
 
+type Key struct {
+	Name string 
+	TimeStamp time.Time
+	VersionIdentifier string
+}
+
 const (
  	defaultCollectionPrefix = "dd"                                               
  	reservedCollectionPrefix = "rr"
@@ -26,16 +32,27 @@ func DefaultCollectionName(username string) string {
 func ReservedCollectionName(username string, collectionName string) string {                
 	return fmt.Sprintf("%s-%s-%s", reservedCollectionPrefix, username, 
  		collectionName)
- }
+}
 
- func rawMapToCollection(rawMap map[string]interface{}) (*Collection, error) {
+func rawMapToCollection(rawMap map[string]interface{}) (*Collection, error) {
     name := rawMap["name"].(string)
     creationTime, err := time.Parse(time.RFC1123, 
-    	rawMap["creation-time"].(string)); if err != nil {
-    		return nil, err
-    	}
+    	rawMap["creation-time"].(string))
+    if err != nil {
+    	return nil, err
+    }
     versioning := rawMap["versioning"].(bool)
     return &Collection{name, creationTime, versioning}, nil
+}   
+ 
+func rawMapToKey(rawMap map[string]interface{}) (*Key, error) {
+    name := rawMap["key"].(string)
+    timeStamp, err := time.Parse(time.RFC1123, rawMap["timestamp"].(string))
+    if err != nil {
+    	return nil, err
+    }
+    versionIdentifier := rawMap["version_identifier"].(string)
+    return &Key{name, timeStamp, versionIdentifier}, nil
 }   
  
 func ListCollections(requester Requester, credentials *Credentials) (
@@ -111,6 +128,59 @@ func CreateCollection(requester Requester, credentials *Credentials,
 	return collection, nil
 }
 
+func ListKeysInCollection(requester Requester, credentials *Credentials, 
+	collectionName string) ([]Key, bool, error) {
+
+	method := "GET"
+	hostName := requester.CollectionHostName(collectionName)
+	path := "/data/"
+
+	response, err := requester.Request(method, hostName, path, nil) 
+	if err != nil {
+		return nil, false, err
+	}
+
+	if response.StatusCode != http.StatusOK {
+		err = fmt.Errorf("GET %s %s failed (%d) %s", hostName, path, 
+			response.StatusCode, response.Body)
+		return nil, false, err
+	}
+
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body); if err != nil {
+		return nil, false, err
+	}
+
+	var rawResultMap map[string]interface{}
+	err = json.Unmarshal(body, &rawResultMap); if err != nil {
+        return nil, false, err
+    }
+    fmt.Printf("%v\n", rawResultMap)
+
+	rawKeySlice, ok := rawResultMap["key_data"].([]interface{})
+	if !ok {
+		err = fmt.Errorf("Unable to convert %v", rawResultMap["key_data"])
+        return nil, false, err
+    }
+
+    var keySlice []Key
+    for _, rawKeyInterface := range rawKeySlice {
+		rawKeyMap, ok := rawKeyInterface.(map[string]interface{})
+		if !ok {
+			err = fmt.Errorf("Unable to convert %v", rawKeyInterface)
+        	return nil, false, err
+    	}
+    	key, err := rawMapToKey(rawKeyMap); if err != nil {
+    		return nil, false, err
+    	}
+    	keySlice = append(keySlice, *key)
+    }
+
+    truncated := rawResultMap["truncated"].(bool)
+
+ 	return keySlice, truncated, nil
+}
+
 func DeleteCollection(requester Requester, credentials *Credentials, 
 	collectionName string) (bool, error) {
 
@@ -124,7 +194,7 @@ func DeleteCollection(requester Requester, credentials *Credentials,
 	}
 
 	if response.StatusCode != http.StatusOK {
-		err = fmt.Errorf("GET %s %s failed (%d) %s", hostName, path, 
+		err = fmt.Errorf("DELETE %s %s failed (%d) %s", hostName, path, 
 			response.StatusCode, response.Body)
 		return false, err
 	}
