@@ -21,7 +21,7 @@ func Archive(requester Requester, credentials *Credentials,
 	}
 
 	if response.StatusCode != http.StatusOK {
-		err = fmt.Errorf("GET %s %s failed (%d) %s", hostName, path, 
+		err = fmt.Errorf("POST %s %s failed (%d) %s", hostName, path, 
 			response.StatusCode, response.Body)
 		return "", err
 	}
