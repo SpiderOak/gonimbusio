@@ -72,13 +72,18 @@ func main() {
 	fmt.Printf("retrieved key '%s'; matches testBody = %v\n", testKey, 
 		string(retrieveResult) == testBody)
 
-	keySlice, truncated, err := nimbusiohttp.ListKeysInCollection(requester, 
+	keySlice, _, err := nimbusiohttp.ListKeysInCollection(requester, 
 		collectionName)
 	if err != nil{
 		log.Fatalf("ListKeysInCollection failed %s\n", err)
 	}
-	fmt.Printf("listed keys in collection = %s %v %v\n", collectionName, 
-		keySlice, truncated)
+	for _, keyEntry := range keySlice {
+		fmt.Printf("deleting key %v\n", keyEntry)
+		err = nimbusiohttp.DeleteKey(requester, collectionName, keyEntry.Name)
+		if err != nil {
+			log.Fatalf("DeleteKey %v failed %s\n", keyEntry, err)
+		}
+	}
 
 	success, err := nimbusiohttp.DeleteCollection(requester, credentials.Name, 
 		collectionName)
