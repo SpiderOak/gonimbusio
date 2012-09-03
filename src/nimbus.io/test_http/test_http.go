@@ -34,7 +34,8 @@ func main() {
 		log.Fatalf("NewRequester failed %s\n", err)
 	}
 
-	collectionList, err := nimbusiohttp.ListCollections(requester, credentials)
+	collectionList, err := nimbusiohttp.ListCollections(requester, 
+		credentials.Name)
 	if err != nil {
 		log.Fatalf("Request failed %s\n", err)
 	}
@@ -42,23 +43,23 @@ func main() {
 
 	collectionName := nimbusiohttp.ReservedCollectionName(credentials.Name, 
 		fmt.Sprintf("test-%05d", len(collectionList)))
-	collection, err := nimbusiohttp.CreateCollection(requester, credentials, 
-		collectionName)
+	collection, err := nimbusiohttp.CreateCollection(requester, 
+		credentials.Name, collectionName)
 	if err != nil{
 		log.Fatalf("CreateCollection failed %s\n", err)
 	}
 	fmt.Printf("created collection = %v\n", collection)
 
 	archiveBody := strings.NewReader(testBody)
-	versionIdentifier, err := nimbusiohttp.Archive(requester, credentials, 
-		collectionName, testKey, archiveBody)
+	versionIdentifier, err := nimbusiohttp.Archive(requester, collectionName, 
+		testKey, archiveBody)
 	if err != nil{
 		log.Fatalf("Archive failed %s\n", err)
 	}
 	fmt.Printf("archived key '%s' to version %v\n", testKey, versionIdentifier)
 
-	retrieveBody, err := nimbusiohttp.Retrieve(requester, credentials, 
-		collectionName, testKey)
+	retrieveBody, err := nimbusiohttp.Retrieve(requester, collectionName, 
+		testKey)
 	if err != nil{
 		log.Fatalf("Retrieve failed %s\n", err)
 	}
@@ -72,14 +73,14 @@ func main() {
 		string(retrieveResult) == testBody)
 
 	keySlice, truncated, err := nimbusiohttp.ListKeysInCollection(requester, 
-		credentials, collectionName)
+		collectionName)
 	if err != nil{
 		log.Fatalf("ListKeysInCollection failed %s\n", err)
 	}
 	fmt.Printf("listed keys in collection = %s %v %v\n", collectionName, 
 		keySlice, truncated)
 
-	success, err := nimbusiohttp.DeleteCollection(requester, credentials, 
+	success, err := nimbusiohttp.DeleteCollection(requester, credentials.Name, 
 		collectionName)
 	if err != nil{
 		log.Fatalf("DeleteCollection failed %s\n", err)

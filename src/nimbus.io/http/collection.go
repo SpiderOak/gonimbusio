@@ -55,12 +55,12 @@ func rawMapToKey(rawMap map[string]interface{}) (*Key, error) {
     return &Key{name, timeStamp, versionIdentifier}, nil
 }   
  
-func ListCollections(requester Requester, credentials *Credentials) (
+func ListCollections(requester Requester, userName string) (
 	[]Collection, error) {
 
 	method := "GET"
 	hostName := requester.DefaultHostName()
-	path := fmt.Sprintf("/customers/%s/collections", credentials.Name)
+	path := fmt.Sprintf("/customers/%s/collections", userName)
 
 	response, err := requester.Request(method, hostName, path, nil)
 	if err != nil {
@@ -93,13 +93,13 @@ func ListCollections(requester Requester, credentials *Credentials) (
 	return result, nil
 }
 
-func CreateCollection(requester Requester, credentials *Credentials, 
+func CreateCollection(requester Requester, userName string, 
 	collectionName string) (*Collection, error) {
 
 	method := "POST"
 	hostName := requester.DefaultHostName()
 	path := fmt.Sprintf("/customers/%s/collections?action=create&name=%s", 
-		credentials.Name, collectionName)
+		userName, collectionName)
 	response, err := requester.Request(method, hostName, path, nil)
 	if err != nil {
 		return nil, err
@@ -128,8 +128,8 @@ func CreateCollection(requester Requester, credentials *Credentials,
 	return collection, nil
 }
 
-func ListKeysInCollection(requester Requester, credentials *Credentials, 
-	collectionName string) ([]Key, bool, error) {
+func ListKeysInCollection(requester Requester, collectionName string) (
+	[]Key, bool, error) {
 
 	method := "GET"
 	hostName := requester.CollectionHostName(collectionName)
@@ -181,13 +181,13 @@ func ListKeysInCollection(requester Requester, credentials *Credentials,
  	return keySlice, truncated, nil
 }
 
-func DeleteCollection(requester Requester, credentials *Credentials, 
+func DeleteCollection(requester Requester, userName string, 
 	collectionName string) (bool, error) {
 
 	method := "DELETE"
 	hostName := requester.DefaultHostName()
 	path := fmt.Sprintf("/customers/%s/collections/%s", 
-		credentials.Name, collectionName)
+		userName, collectionName)
 	response, err := requester.Request(method, hostName, path, nil) 
 	if err != nil {
 		return false, err

@@ -9,8 +9,8 @@ import (
 	"io/ioutil"
 )
 
-func Archive(requester Requester, credentials *Credentials, 
-	collectionName string, key string, requestBody io.Reader) (string, error) {
+func Archive(requester Requester, collectionName string, key string, 
+	requestBody io.Reader) (string, error) {
 	method := "POST"
 	hostName := requester.CollectionHostName(collectionName)
 	path := fmt.Sprintf("/data/%s", url.QueryEscape(key))
@@ -39,8 +39,8 @@ func Archive(requester Requester, credentials *Credentials,
 	return versionIdentifier, nil
 }
 
-func Retrieve(requester Requester, credentials *Credentials, 
-	collectionName string, key string) (io.ReadCloser, error) {
+func Retrieve(requester Requester, collectionName string, key string) (
+	io.ReadCloser, error) {
 	method := "GET"
 	hostName := requester.CollectionHostName(collectionName)
 	path := fmt.Sprintf("/data/%s", url.QueryEscape(key))
