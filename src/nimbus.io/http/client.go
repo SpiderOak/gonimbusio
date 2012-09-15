@@ -49,8 +49,10 @@ func NewRequester(credentials *Credentials) (Requester, error) {
 		return nil, err
 	}
 
-	httpTransport := &http.Transport{DisableKeepAlives : true}
-	httpClient := &http.Client{Transport : httpTransport}
+	// TODO: the web server is sending a "Connection: close" header
+	// We should deal with that
+	httpTransport := &http.Transport{DisableKeepAlives: true}
+	httpClient := &http.Client{Transport: httpTransport}
 
 	requester := client{
 		credentials,
@@ -82,8 +84,9 @@ func (client *client) Request(method string, hostName string, path string,
 		return nil, err
 	}
 
-	authString, err := ComputeAuthString(client.credentials, method, timestamp, 
-		path); if err != nil {
+	authString, err := ComputeAuthString(client.credentials, method, timestamp,
+		path)
+	if err != nil {
 		return nil, err
 	}
 	request.Header.Add("Authorization", authString)
