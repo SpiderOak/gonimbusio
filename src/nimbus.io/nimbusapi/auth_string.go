@@ -1,4 +1,4 @@
-package http
+package nimbusapi
 
 import (
 	"crypto/hmac"
