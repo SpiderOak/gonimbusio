@@ -20,6 +20,11 @@ type Key struct {
 	VersionIdentifier string
 }
 
+type listKeyResult struct {
+	Truncated bool
+	KeySlice []Key
+}
+
 const (
  	defaultCollectionPrefix = "dd"                                               
  	reservedCollectionPrefix = "rr"
@@ -34,27 +39,6 @@ func ReservedCollectionName(username string, collectionName string) string {
  		collectionName)
 }
 
-func rawMapToCollection(rawMap map[string]interface{}) (*Collection, error) {
-    name := rawMap["name"].(string)
-    creationTime, err := time.Parse(time.RFC1123, 
-    	rawMap["creation-time"].(string))
-    if err != nil {
-    	return nil, err
-    }
-    versioning := rawMap["versioning"].(bool)
-    return &Collection{name, creationTime, versioning}, nil
-}   
- 
-func rawMapToKey(rawMap map[string]interface{}) (*Key, error) {
-    name := rawMap["key"].(string)
-    timeStamp, err := time.Parse(time.RFC1123, rawMap["timestamp"].(string))
-    if err != nil {
-    	return nil, err
-    }
-    versionIdentifier := rawMap["version_identifier"].(string)
-    return &Key{name, timeStamp, versionIdentifier}, nil
-}   
- 
 func ListCollections(requester Requester, userName string) (
 	[]Collection, error) {
 
@@ -78,18 +62,11 @@ func ListCollections(requester Requester, userName string) (
 		return nil, err
 	}
 
-	var rawSlice []map[string]interface{}
-	err = json.Unmarshal(body, &rawSlice); if err != nil {
+    var result []Collection
+	err = json.Unmarshal(body, &result); if err != nil {
         return nil, err
     }
 
-    var result []Collection
-    for _, rawMap := range rawSlice {
-    	collection, err := rawMapToCollection(rawMap); if err != nil {
-    		return nil, err
-    	}
-    	result = append(result, *collection)
-    }
 	return result, nil
 }
 
@@ -116,16 +93,12 @@ func CreateCollection(requester Requester, userName string,
 		return nil, err
 	}
 
-	var rawMap map[string]interface{}
-	err = json.Unmarshal(body, &rawMap); if err != nil {
+	var collection Collection
+	err = json.Unmarshal(body, &collection); if err != nil {
         return nil, err
     }
 
-    collection, err := rawMapToCollection(rawMap); if err != nil {
-    	return nil, err
-    }
-
-	return collection, nil
+	return &collection, nil
 }
 
 func ListKeysInCollection(requester Requester, collectionName string) (
@@ -151,34 +124,13 @@ func ListKeysInCollection(requester Requester, collectionName string) (
 		return nil, false, err
 	}
 
-	var rawResultMap map[string]interface{}
-	err = json.Unmarshal(body, &rawResultMap); if err != nil {
+    var listResult listKeyResult
+	err = json.Unmarshal(body, &listResult); if err != nil {
         return nil, false, err
     }
-    fmt.Printf("%v\n", rawResultMap)
+    fmt.Printf("%v\n", listResult)
 
-	rawKeySlice, ok := rawResultMap["key_data"].([]interface{})
-	if !ok {
-		err = fmt.Errorf("Unable to convert %v", rawResultMap["key_data"])
-        return nil, false, err
-    }
-
-    var keySlice []Key
-    for _, rawKeyInterface := range rawKeySlice {
-		rawKeyMap, ok := rawKeyInterface.(map[string]interface{})
-		if !ok {
-			err = fmt.Errorf("Unable to convert %v", rawKeyInterface)
-        	return nil, false, err
-    	}
-    	key, err := rawMapToKey(rawKeyMap); if err != nil {
-    		return nil, false, err
-    	}
-    	keySlice = append(keySlice, *key)
-    }
-
-    truncated := rawResultMap["truncated"].(bool)
-
- 	return keySlice, truncated, nil
+ 	return listResult.KeySlice, listResult.Truncated, nil
 }
 
 func DeleteCollection(requester Requester, userName string, 
@@ -204,12 +156,10 @@ func DeleteCollection(requester Requester, userName string,
 		return false, err
 	}
 
-	var rawMap map[string]interface{}
-	err = json.Unmarshal(body, &rawMap); if err != nil {
+	var resultMap map[string]bool
+	err = json.Unmarshal(body, &resultMap); if err != nil {
         return false, err
     }
 
-    success := rawMap["success"].(bool)
-
-	return success, nil
+	return resultMap["success"], nil
 }

@@ -30,13 +30,12 @@ func Archive(requester Requester, collectionName string, key string,
 	responseBody, err := ioutil.ReadAll(response.Body); if err != nil {
 		return "", err
 	}
-	var rawMap map[string]interface{}
-	err = json.Unmarshal(responseBody, &rawMap); if err != nil {
+	var versionMap map[string]string
+	err = json.Unmarshal(responseBody, &versionMap); if err != nil {
         return "", err
     }
-    versionIdentifier := rawMap["version_identifier"].(string)
 
-	return versionIdentifier, nil
+    return versionMap["version_identifier"], nil
 }
 
 func Retrieve(requester Requester, collectionName string, key string) (
@@ -80,12 +79,11 @@ func DeleteKey(requester Requester, collectionName string, key string) (error) {
 		return err
 	}
 
-	var rawMap map[string]interface{}
-	err = json.Unmarshal(responseBody, &rawMap); if err != nil {
+	var resultMap map[string]bool
+	err = json.Unmarshal(responseBody, &resultMap); if err != nil {
         return err
     }
-    success := rawMap["success"].(bool)
-    if !success {
+    if !resultMap["success"] {
     	err = fmt.Errorf("unexpected 'false' for 'success'")
     	return err
     }
