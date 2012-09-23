@@ -5,24 +5,23 @@ import (
 	"fmt"
 	"net/http"
 	"io/ioutil"
-	"time"
 )
 
 type Collection struct {
-	Name string 
-	CreationTime time.Time
-	Versioned bool
+	Name string `json:"name"` 
+	CreationTime string `json:"creation-time"`
+	Versioned bool `json:"versioning"`
 }
 
 type Key struct {
-	Name string 
-	TimeStamp time.Time
-	VersionIdentifier string
+	Name string  `json:"name"`
+	TimeStamp string `json:"timestamp"`
+	VersionIdentifier string `json:"version_identifier"`
 }
 
 type listKeyResult struct {
-	Truncated bool
-	KeySlice []Key
+	Truncated bool `json:"truncated"`
+	KeySlice []Key `json:"key_data"`
 }
 
 const (
