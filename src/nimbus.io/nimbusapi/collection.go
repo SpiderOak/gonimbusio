@@ -14,7 +14,7 @@ type Collection struct {
 }
 
 type Key struct {
-	Name string  `json:"name"`
+	Name string  `json:"key"`
 	TimeStamp string `json:"timestamp"`
 	VersionIdentifier string `json:"version_identifier"`
 }
