@@ -2,6 +2,7 @@ package main
 
 import (
   "encoding/json"
+  "fmt"
   "io/ioutil"
   "log"
   "time"
@@ -22,7 +23,7 @@ const (
     DeleteVersion
 )
 
-var ActionStringMap = map[Action]string {
+var actionStringMap = map[Action]string {
     CreateBucket : "CreateBucket",
     CreateVersionedBucket : "CreateVersionedBucket",
     DeleteBucket : "DeleteBucket",
@@ -36,7 +37,7 @@ var ActionStringMap = map[Action]string {
 }
 
 func (action Action) String() (string) {
-  if name, found := ActionStringMap[action]; found {
+  if name, found := actionStringMap[action]; found {
     return name
   }
   return "unknown"
@@ -68,7 +69,7 @@ type RawConfig struct {
    MultipartPartSize int `json:"multipart-part-size"`
 }
 
-type ActionValue struct {
+type actionValue struct {
   Action Action
   Count int
 }
@@ -101,7 +102,7 @@ func LoadConfig(path string) (*Config, error) {
   log.Printf("rawConfig: %v", rawConfig)
 
   // distribution percentage of each action, should sum to 100 
-  var actionDistributions = []ActionValue {
+  var actionDistributions = []actionValue {
     {CreateBucket, rawConfig.Distribution.CreateBucket},
     {CreateVersionedBucket, rawConfig.Distribution.CreateVersionedBucket},
     {DeleteBucket, rawConfig.Distribution.DeleteBucket},
@@ -122,6 +123,10 @@ func LoadConfig(path string) (*Config, error) {
       actionPercent[index] = actionDistribution.Action
       index += 1
     }
+  }
+  // the distribution should add up to 100%
+  if index != 100 {
+    return nil, fmt.Errorf("distributin does not total 100%% %s", index) 
   }
 
   config := Config{
