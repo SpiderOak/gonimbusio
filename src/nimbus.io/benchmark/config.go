@@ -40,7 +40,7 @@ func (action Action) String() (string) {
   if name, found := actionStringMap[action]; found {
     return name
   }
-  return "unknown"
+  return "unknown Action"
 }
 
 type ActionDistribution struct {
