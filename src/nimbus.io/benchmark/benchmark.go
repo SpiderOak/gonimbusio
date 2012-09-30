@@ -5,6 +5,7 @@ import (
 	"log"
 	"nimbus.io/nimbusapi"
 	"path"
+	"time"
 )
 
 func main() {
@@ -24,6 +25,8 @@ func main() {
 			flags.UserIdentityDir, err)
 	}
 
+	testDuration := time.Duration(flags.Duration) * time.Second
+	finishTime := time.Now().UTC().Add(testDuration)
 	infoChan := make(chan *UserInfo, flags.MaxUsers)
 
 	var simCount int = 0
@@ -39,7 +42,7 @@ func main() {
 			log.Fatalf("Unable to load credentials %s %s", 
 				credentialsPath, err)
 		}
-		go RunSimulation(credentials, config, infoChan)
+		go RunSimulation(credentials, config, finishTime, infoChan)
 		simCount += 1
 	}
 

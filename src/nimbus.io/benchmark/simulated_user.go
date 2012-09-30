@@ -41,10 +41,14 @@ type UserInfoChan chan<- *UserInfo
 
 
 func RunSimulation(credentials *nimbusapi.Credentials, config *Config, 
-	infoChan UserInfoChan) error {
+	finishTime time.Time, infoChan UserInfoChan) error {
+	var currentTime = time.Now().UTC()
 	infoChan <- &UserInfo{credentials.Name, UserStatusStarted, "", 
-		time.Now().UTC()}
+		currentTime}
+	for ; currentTime.Before(finishTime); currentTime = time.Now().UTC() {
+		time.Sleep(time.Second * 10)
+	}
 	infoChan <- &UserInfo{credentials.Name, UserStatusNormalTermination, "", 
-		time.Now().UTC()}
+		currentTime}
 	return nil
 }
