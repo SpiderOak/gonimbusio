@@ -42,7 +42,10 @@ func main() {
 			log.Fatalf("Unable to load credentials %s %s", 
 				credentialsPath, err)
 		}
-		go RunSimulation(credentials, config, finishTime, infoChan)
+		requester, err := nimbusapi.NewRequester(credentials); if err != nil {
+			log.Fatalf("NewRequester failed %s\n", err)
+		}		
+		go RunSimulation(credentials, requester, config, finishTime, infoChan)
 		simCount += 1
 	}
 

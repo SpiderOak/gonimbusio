@@ -1,7 +1,9 @@
 package main
 
 import(
+	"fmt"
 	"nimbus.io/nimbusapi"
+	"math/rand"
 	"time"
 ) 
 
@@ -39,16 +41,95 @@ type UserInfo struct {
 
 type UserInfoChan chan<- *UserInfo
 
+type ActionFunction func(nimbusapi.Requester, *Config) (string, error)
 
-func RunSimulation(credentials *nimbusapi.Credentials, config *Config, 
-	finishTime time.Time, infoChan UserInfoChan) error {
+var CreateBucketFunction ActionFunction = func(requester nimbusapi.Requester, 
+	config *Config) (string, error) {
+	return "stub", nil
+}
+var CreateVersionedBucketFunction ActionFunction = func(
+	requester nimbusapi.Requester, config *Config) (string, error) {
+	return "stub", nil
+}
+var DeleteBucketFunction ActionFunction = func(requester nimbusapi.Requester, 
+	config *Config) (string, error) {
+	return "stub", nil
+}
+var ArchiveNewKeyFunction ActionFunction = func(requester nimbusapi.Requester, 
+	config *Config) (string, error) {
+	return "stub", nil
+}
+var ArchiveNewVersionFunction ActionFunction = func(
+	requester nimbusapi.Requester, config *Config) (string, error) {
+	return "stub", nil
+}
+var ArchiveOverwriteFunction ActionFunction = func(
+	requester nimbusapi.Requester, config *Config) (string, error) {
+	return "stub", nil
+}
+var RetrieveLatestFunction ActionFunction = func(requester nimbusapi.Requester, 
+	config *Config) (string, error) {
+	return "stub", nil
+}
+var RetrieveVersionFunction ActionFunction = func(requester nimbusapi.Requester, 
+	config *Config) (string, error) {
+	return "stub", nil
+}
+var DeleteKeyFunction ActionFunction = func(requester nimbusapi.Requester, 
+	config *Config) (string, error) {
+	return "stub", nil
+}
+var DeleteVersionFunction ActionFunction = func(requester nimbusapi.Requester, 
+	config *Config) (string, error) {
+	return "stub", nil
+}
+
+var ActionFunctionMap = map[Action]ActionFunction {
+	CreateBucket : CreateBucketFunction,
+	CreateVersionedBucket : CreateVersionedBucketFunction,
+    DeleteBucket : DeleteBucketFunction,
+    ArchiveNewKey : ArchiveNewKeyFunction,
+    ArchiveNewVersion : ArchiveNewVersionFunction,
+    ArchiveOverwrite : ArchiveOverwriteFunction,
+    RetrieveLatest : RetrieveLatestFunction,
+    RetrieveVersion : RetrieveVersionFunction,
+    DeleteKey : DeleteKeyFunction,
+    DeleteVersion : DeleteVersionFunction,
+}
+
+func RunSimulation(credentials *nimbusapi.Credentials, 
+	requester nimbusapi.Requester, config *Config, finishTime time.Time, 
+	infoChan UserInfoChan) error {
 	var currentTime = time.Now().UTC()
 	infoChan <- &UserInfo{credentials.Name, UserStatusStarted, "", 
 		currentTime}
 	for ; currentTime.Before(finishTime); currentTime = time.Now().UTC() {
-		time.Sleep(time.Second * 10)
+		action := chooseRandomAction(config)
+		result, err := ActionFunctionMap[action](requester, config) 
+		if err != nil {
+			errorReport := fmt.Sprintf("%s %s", action, err)
+			infoChan <- &UserInfo{credentials.Name, UserStatusError,
+				errorReport, currentTime}
+		} else {
+			actionReport := fmt.Sprintf("%s %s", action, result)
+			infoChan <- &UserInfo{credentials.Name, UserStatusInfo,
+				actionReport, currentTime}
+		} 
+		time.Sleep(computeRandomDelay(config))
 	}
 	infoChan <- &UserInfo{credentials.Name, UserStatusNormalTermination, "", 
 		currentTime}
 	return nil
+}
+
+func computeRandomDelay(config * Config) time.Duration {
+	interval := config.HighDelay - config.LowDelay
+	delay := config.LowDelay +  interval * rand.Float32()  
+	return time.Second * time.Duration(int(delay))
+}
+
+func chooseRandomAction(config * Config) Action {
+	index := rand.Int() % 100
+	return config.ActionSlice[index]
+
 }

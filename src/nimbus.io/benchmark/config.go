@@ -5,7 +5,6 @@ import (
   "fmt"
   "io/ioutil"
   "log"
-  "time"
 )
 
 type Action int
@@ -75,8 +74,8 @@ type actionValue struct {
 }
 
 type Config struct {
-  LowDelay time.Duration
-  HighDelay time.Duration
+  LowDelay float32
+  HighDelay float32
   VerifyBefore bool
   VerifyAfter bool
   MaxBucketCount int
@@ -130,8 +129,8 @@ func LoadConfig(path string) (*Config, error) {
   }
 
   config := Config{
-    time.Duration(int(rawConfig.LowDelay)) * time.Second,
-    time.Duration(int(rawConfig.HighDelay)) * time.Second,
+    rawConfig.LowDelay,
+    rawConfig.HighDelay,
     rawConfig.VerifyBefore,
     rawConfig.VerifyAfter,
     rawConfig.MaxBucketCount,
