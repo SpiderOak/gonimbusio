@@ -1,0 +1,488 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"A",
+				"ActionFunctionMap	map[Action]ActionFunction ν"
+			],
+			[
+				"D",
+				"DeleteVersionFunction	ActionFunction ν"
+			],
+			[
+				"Del",
+				"DeleteKeyFunction	ActionFunction ν"
+			],
+			[
+				"Ret",
+				"RetrieveVersionFunction	ActionFunction ν"
+			],
+			[
+				"Ar",
+				"ArchiveOverwriteFunction	ActionFunction ν"
+			],
+			[
+				"Arch",
+				"ArchiveNewVersionFunction	ActionFunction ν"
+			],
+			[
+				"Arv",
+				"ArchiveNewKeyFunction	ActionFunction ν"
+			],
+			[
+				"DeleteBu",
+				"DeleteBucketFunction	ActionFunction ν"
+			],
+			[
+				"C",
+				"CreateBucket	 Ɩ"
+			],
+			[
+				"R",
+				"RunSimulation	error ƒ"
+			],
+			[
+				"T",
+				"Time	struct ʈ"
+			],
+			[
+				"U",
+				"UTC	*time.Location ν"
+			],
+			[
+				"UserI",
+				"UserInfoChan	chan<- UserInfo ʈ"
+			],
+			[
+				"S",
+				"Second	 Ɩ"
+			],
+			[
+				"retrieve",
+				"retrieveResult	[]byte ν"
+			],
+			[
+				"coll",
+				"collectionName	 ν"
+			],
+			[
+				"default",
+				"defaultServiceDomain	 Ɩ"
+			],
+			[
+				"G",
+				"Getenv	string ƒ"
+			],
+			[
+				"r",
+				"RFC822	 Ɩ"
+			],
+			[
+				"P",
+				"Printf	n int, err error ƒ"
+			],
+			[
+				"a",
+				"authKeyId	int ν"
+			],
+			[
+				"err",
+				"error	error ν"
+			],
+			[
+				"N",
+				"Now	time.Time ƒ"
+			],
+			[
+				"F",
+				"Fatalf	 ƒ"
+			],
+			[
+				"Sp",
+				"Sprintf	string ƒ"
+			],
+			[
+				"info",
+				"infoChan	chan fileInfo ν"
+			],
+			[
+				"ModeT",
+				"ModeType	 Ɩ"
+			],
+			[
+				"command",
+				"commandData	struct ʈ"
+			],
+			[
+				"up",
+				"updater	UpdateFunc ν"
+			],
+			[
+				"com",
+				"commandData	struct ʈ"
+			],
+			[
+				"s",
+				"safeMap	chan commandData ʈ"
+			],
+			[
+				"l",
+				"line	[]byte ν"
+			],
+			[
+				"Tr",
+				"TrimRight	[]byte ƒ"
+			],
+			[
+				"Pr",
+				"Printf	 ƒ"
+			],
+			[
+				"fil",
+				"filenames	[]string ν"
+			],
+			[
+				"E",
+				"Exit	 ƒ"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "colarchive/colarchive.go",
+			"settings":
+			{
+				"buffer_size": 237,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "colarchive/flags.go",
+			"settings":
+			{
+				"buffer_size": 675,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "benchmark/flags.go",
+			"settings":
+			{
+				"buffer_size": 845,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "benchmark/benchmark.go",
+			"settings":
+			{
+				"buffer_size": 1860,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"P",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 449.0
+	},
+	"console":
+	{
+		"height": 139.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/dougfort/gonimbusio/src/nimbus.io/benchmark/benchmark.go",
+		"/home/dougfort/gonimbusio/src/nimbus.io/benchmark/benchmark",
+		"/home/dougfort/gonimbusio/src/nimbus.io/colarchive/colarchive.go",
+		"/home/dougfort/gonimbusio/src/nimbus.io/benchmark/benchmark.sublime-project",
+		"/home/dougfort/.config/sublime-text-2/Packages/User/Preferences.sublime-settings",
+		"/home/dougfort/Documents/distributed_mind.html",
+		"/home/dougfort/.config/sublime-text-2/Packages/GoSublime/CHANGELOG.md",
+		"/home/dougfort/gonimbusio/src/nimbus.io/nimbusapi/http.go",
+		"/home/dougfort/gonimbusio/src/nimbus.io/http/key.go",
+		"/home/dougfort/gonimbusio/src/nimbus.io/test_http/test_http.go",
+		"/home/dougfort/gonimbusio/src/nimbus.io/http/collection.go",
+		"/home/dougfort/gonimbusio/src/nimbus.io/http/auth_string.go",
+		"/home/dougfort/gonimbusio/src/nimbus.io/http/client.go",
+		"/home/dougfort/gonimbusio/src/nimbus.io/http/credentials.go",
+		"/home/dougfort/gonimbusio/src/nimbus.io/http/credentials_test.go",
+		"/home/dougfort/gonimbusio/src/nimbus.io/http/auth_string_test.go",
+		"/home/dougfort/gonimbusio/src/nimbus.io/http/http.go",
+		"/home/dougfort/gonimbusio/src/nimbus.io/functional_tests/test_functions/test_functions.go",
+		"/home/dougfort/gonimbusio/src/nimbus.io/functional_tests/functional_tests.go",
+		"/home/dougfort/go_language/src/safe_slice/safe_slice_test.go",
+		"/home/dougfort/go_language/src/safe_slice/safe_slice.go",
+		"/home/dougfort/auth_key.txt",
+		"/home/dougfort/gonimbusio/src/nimbusio/http/auth_string_test.go",
+		"/home/dougfort/gonimbusio/src/nimbusio/test_http/test_http.go",
+		"/home/dougfort/gonimbusio/src/aaa/aaa.go",
+		"/home/dougfort/gonimbusio/src/bbb/bbb.go",
+		"/home/dougfort/.config/sublime-text-2/Packages/Default/Preferences.sublime-settings",
+		"/home/dougfort/gonimbusio/src/test_http/test_http.go",
+		"/home/dougfort/drfogout/src/spider_solitaire/spider_solitaire_test.go",
+		"/home/dougfort/drfogout/src/spider_solitaire/spider_solitaire.go",
+		"/home/dougfort/go_language/src/findduplicates/findduplicates.go",
+		"/home/dougfort/go_language/src/safemap/safemap.go",
+		"/home/dougfort/go_language/src/cgrep1/cgrep.go",
+		"/home/dougfort/go_language/src/filter/filter.go"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"func(config *Config)",
+			"json",
+			" int",
+			" int,",
+			"ReadFile",
+			"reader",
+			"FileReader",
+			"json",
+			"rawMapToColl",
+			"rawMap",
+			"json",
+			"rawMapToColl",
+			"json",
+			"nimbusiohttp",
+			"credentials",
+			"ListKeysInCollection",
+			"log",
+			"ComputeAuthString",
+			"	\"io/ioutil\"\n",
+			"	fmt.Printf(\"object = '%v'\", object)\n",
+			"requestor",
+			"userName =",
+			"env",
+			"environment"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"func(requester nimbusapi.Requester, config *Config)",
+			",",
+			"nimbusapi",
+			"requester",
+			"testEntry{"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "colarchive/colarchive.go",
+					"settings":
+					{
+						"buffer_size": 237,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								206,
+								206
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Go/Go.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "colarchive/flags.go",
+					"settings":
+					{
+						"buffer_size": 675,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								232,
+								232
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Go/Go.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "benchmark/flags.go",
+					"settings":
+					{
+						"buffer_size": 845,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								845,
+								845
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Go/Go.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "benchmark/benchmark.go",
+					"settings":
+					{
+						"buffer_size": 1860,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								22,
+								22
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Go/Go.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 33.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 112.0
+	},
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true
+}

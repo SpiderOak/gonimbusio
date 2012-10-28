@@ -1,0 +1,17 @@
+{
+	"folders":
+	[
+		{
+			"path": "benchmark"
+		},
+		{
+			"path": "colarchive"
+		},
+		{
+			"path": "nimbusapi"
+		},
+		{
+			"path": "test_nimbusapi"
+		}
+	]
+}
