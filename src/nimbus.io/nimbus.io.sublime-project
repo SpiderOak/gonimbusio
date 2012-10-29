@@ -5,13 +5,13 @@
 			"path": "benchmark"
 		},
 		{
-			"path": "colarchive"
-		},
-		{
 			"path": "nimbusapi"
 		},
 		{
 			"path": "test_nimbusapi"
+		},
+		{
+			"path": "nimbus_blaster"
 		}
 	]
 }

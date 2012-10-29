@@ -24,3 +24,5 @@ _testmain.go
 # project executeables
 src/nimbus.io/test_nimbusapi/test_nimbusapi
 src/nimbus.io/benchmark/benchmark
+src/nimbus.io/nimbus_blaster/nimbus_blaster
+
