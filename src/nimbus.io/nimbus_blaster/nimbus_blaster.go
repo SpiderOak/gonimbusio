@@ -6,6 +6,43 @@ import (
 	"os"
 )
 
+func startConjoined(credentials *nimbusapi.Credentials, flags Flags) (
+	string, error) {
+	requester, err := nimbusapi.NewRequester(credentials); if err != nil {
+		return "", err
+	}
+
+	conjoinedIdentifier, err := nimbusapi.StartConjoined(requester, 
+		flags.collection, flags.key); if err != nil {
+		return "", err
+	}
+
+	return conjoinedIdentifier, nil
+}
+func finishConjoined(credentials *nimbusapi.Credentials, flags Flags, 
+	conjoinedIdentifier string) error {
+	requester, err := nimbusapi.NewRequester(credentials); if err != nil {
+		return err
+	}
+
+	err = nimbusapi.FinishConjoined(requester, flags.collection, flags.key, 
+		conjoinedIdentifier)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func abortConjoined(credentials *nimbusapi.Credentials, flags Flags, 
+	conjoinedIdentifier string) {
+	requester, err := nimbusapi.NewRequester(credentials); if err != nil {
+		return
+	}
+
+	nimbusapi.AbortConjoined(requester, flags.collection, flags.key, 
+		conjoinedIdentifier)
+}
+
 func main() {
 	log.Println("program starts")
 	flags, err := loadFlags(); if err != nil {
@@ -24,17 +61,6 @@ func main() {
 		log.Fatalf("Error loading credentials %s\n", err)
 	}
 
-	requester, err := nimbusapi.NewRequester(credentials); if err != nil {
-		log.Fatalf("Error creating requester %s\n", err)
-	}
-
-	conjoinedIdentifier, err := nimbusapi.StartConjoined(requester, 
-		flags.collection, flags.key); if err != nil {
-		log.Fatalf("StartConjoined %s %s failed %s", flags.collection, 
-			flags.key, err)
-	}
-	log.Printf("conjoined_identifier = %s", conjoinedIdentifier)
-
 	if flags.collection == "" {
 		flags.collection = nimbusapi.DefaultCollectionName(credentials.Name)
 	}
@@ -42,20 +68,59 @@ func main() {
 	info, err := os.Stat(flags.filePath); if err != nil {
 		log.Fatalf("Unable to stat %s %s", flags.filePath, err)
 	}
-	sliceCount := info.Size() / flags.sliceSize
+	sliceCount := int(info.Size() / flags.sliceSize)
 	if info.Size() % flags.sliceSize != 0 {
 		sliceCount += 1
 	}
 	log.Printf("archiving %s %d bytes %d slices", flags.filePath, info.Size(), 
 		sliceCount)
 
-	file, err := os.Open(flags.filePath); if err != nil {
-		log.Fatalf("error %s opening %s", err, flags.filePath)
-	}
-	defer file.Close()
+	conjoinedIdentifier, err := startConjoined(credentials, flags)
+	if err != nil {
+		log.Fatalf("StartConjoined %s %s failed %s", flags.collection, 
+			flags.key, err)
+	} 
+	log.Printf("conjoined_identifier = %s", conjoinedIdentifier)
 
-	err = nimbusapi.FinishConjoined(requester, flags.collection, flags.key, 
-		conjoinedIdentifier); if err != nil {
+	work := make(chan WorkUnit, sliceCount)
+    results := make(chan error, sliceCount)
+	for id := 0; id < sliceCount; id++ {
+		requester, err := nimbusapi.NewRequester(credentials); if err != nil {
+			log.Fatalf("Error creating requester %s\n", err)
+		}
+		go worker(id, flags.filePath, requester, work, results)
+	}
+
+	var offset int64 = 0
+	var size int64 = flags.sliceSize
+ 	for conjoinedPart := 1; conjoinedPart <= sliceCount; conjoinedPart++ {
+ 		offset += size
+ 		if conjoinedPart == sliceCount {
+ 			size = info.Size() - offset
+ 		}
+		workUnit := WorkUnit {
+			flags.collection,
+			flags.key,
+			conjoinedIdentifier,
+			conjoinedPart,
+			offset,
+			size,
+		}
+		work <- workUnit
+	}
+
+	for completed := 0; completed < sliceCount; completed++ {
+		workResult := <-results
+		if workResult != nil {
+			abortConjoined(credentials, flags, conjoinedIdentifier)
+			log.Fatalf("Error in worker %s\n", workResult)
+		}
+	}
+	close(work)
+	close(results)
+
+	err = finishConjoined(credentials, flags, conjoinedIdentifier)
+	if err != nil {
 		log.Fatalf("FinishConjoined %s %s failed %s", flags.collection, 
 			flags.key, err)
 	}

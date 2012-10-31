@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"S",
+				"String	*string ƒ"
+			],
+			[
+				"Fa",
+				"Fatalf	 ƒ"
+			],
+			[
 				"A",
 				"ActionFunctionMap	map[Action]ActionFunction ν"
 			],
@@ -54,10 +62,6 @@
 			[
 				"UserI",
 				"UserInfoChan	chan<- UserInfo ʈ"
-			],
-			[
-				"S",
-				"Second	 Ɩ"
 			],
 			[
 				"retrieve",
@@ -152,34 +156,42 @@
 	"buffers":
 	[
 		{
-			"file": "colarchive/colarchive.go",
+			"file": "nimbus_blaster/flags.go",
 			"settings":
 			{
-				"buffer_size": 237,
+				"buffer_size": 1069,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "colarchive/flags.go",
+			"file": "nimbus_blaster/nimbus_blaster.go",
 			"settings":
 			{
-				"buffer_size": 675,
+				"buffer_size": 3427,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "benchmark/flags.go",
+			"file": "nimbus_blaster/worker.go",
 			"settings":
 			{
-				"buffer_size": 845,
+				"buffer_size": 794,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "benchmark/benchmark.go",
+			"file": "nimbusapi/key.go",
 			"settings":
 			{
-				"buffer_size": 1860,
+				"buffer_size": 5735,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "test_nimbusapi/test_nimbusapi.go",
+			"settings":
+			{
+				"buffer_size": 2521,
 				"line_ending": "Unix"
 			}
 		}
@@ -212,9 +224,12 @@
 	},
 	"file_history":
 	[
+		"/home/dougfort/gonimbusio/src/nimbus.io/nimbus.io.sublime-project",
 		"/home/dougfort/gonimbusio/src/nimbus.io/benchmark/benchmark.go",
-		"/home/dougfort/gonimbusio/src/nimbus.io/benchmark/benchmark",
+		"/home/dougfort/gonimbusio/src/nimbus.io/benchmark/flags.go",
+		"/home/dougfort/gonimbusio/src/nimbus.io/colarchive/flags.go",
 		"/home/dougfort/gonimbusio/src/nimbus.io/colarchive/colarchive.go",
+		"/home/dougfort/gonimbusio/src/nimbus.io/benchmark/benchmark",
 		"/home/dougfort/gonimbusio/src/nimbus.io/benchmark/benchmark.sublime-project",
 		"/home/dougfort/.config/sublime-text-2/Packages/User/Preferences.sublime-settings",
 		"/home/dougfort/Documents/distributed_mind.html",
@@ -264,6 +279,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"conjoinedPart",
 			"func(config *Config)",
 			"json",
 			" int",
@@ -310,23 +326,77 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "colarchive/colarchive.go",
+					"file": "nimbus_blaster/flags.go",
 					"settings":
 					{
-						"buffer_size": 237,
+						"buffer_size": 1069,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								206,
-								206
+								844,
+								844
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Go/Go.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 145.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "nimbus_blaster/nimbus_blaster.go",
+					"settings":
+					{
+						"buffer_size": 3427,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1033,
+								1033
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Go/Go.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 274.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "nimbus_blaster/worker.go",
+					"settings":
+					{
+						"buffer_size": 794,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								794,
+								794
 							]
 						],
 						"settings":
@@ -334,79 +404,25 @@
 							"syntax": "Packages/Go/Go.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "colarchive/flags.go",
-					"settings":
-					{
-						"buffer_size": 675,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								232,
-								232
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Go/Go.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "benchmark/flags.go",
-					"settings":
-					{
-						"buffer_size": 845,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								845,
-								845
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Go/Go.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 155.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "benchmark/benchmark.go",
+					"file": "nimbusapi/key.go",
 					"settings":
 					{
-						"buffer_size": 1860,
+						"buffer_size": 5735,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								22,
-								22
+								3866,
+								3866
 							]
 						],
 						"settings":
@@ -415,7 +431,34 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1761.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "test_nimbusapi/test_nimbusapi.go",
+					"settings":
+					{
+						"buffer_size": 2521,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1358,
+								1358
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Go/Go.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 393.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
