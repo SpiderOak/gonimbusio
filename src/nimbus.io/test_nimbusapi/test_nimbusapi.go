@@ -52,7 +52,7 @@ func main() {
 
 	archiveBody := strings.NewReader(testBody)
 	versionIdentifier, err := nimbusapi.Archive(requester, collectionName, 
-		testKey, archiveBody)
+		testKey, nil, archiveBody)
 	if err != nil{
 		log.Fatalf("Archive failed %s\n", err)
 	}

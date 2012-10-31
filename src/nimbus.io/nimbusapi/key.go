@@ -7,13 +7,17 @@ import (
 	"net/url"
 	"io"
 	"io/ioutil"
+	"strconv"
 )
 
 func StartConjoined(requester Requester, collectionName string, key string) (
 	string, error) {
 	method := "POST"
 	hostName := requester.CollectionHostName(collectionName)
-	path := fmt.Sprintf("/conjoined/%s?action=start", url.QueryEscape(key))
+	values := url.Values{}
+	values.Set("action", "start")
+	path := fmt.Sprintf("/conjoined/%s?%s", url.QueryEscape(key), 
+		values.Encode())
 
 	response, err := requester.Request(method, hostName, path, nil) 
 	if err != nil {
@@ -42,8 +46,11 @@ func AbortConjoined(requester Requester, collectionName string, key string,
 	conjoinedIdentifier string) error {
 	method := "POST"
 	hostName := requester.CollectionHostName(collectionName)
-	path := fmt.Sprintf("/conjoined/%s?action=abort&conjoined_identifier=%s", 
-		url.QueryEscape(key), conjoinedIdentifier)
+	values := url.Values{}
+	values.Set("action", "abort")
+	values.Set("conjoined_identifier", conjoinedIdentifier)
+	path := fmt.Sprintf("/conjoined/%s?%s", url.QueryEscape(key), 
+		values.Encode())
 
 	response, err := requester.Request(method, hostName, path, nil) 
 	if err != nil {
@@ -76,8 +83,11 @@ func FinishConjoined(requester Requester, collectionName string, key string,
 	conjoinedIdentifier string) error {
 	method := "POST"
 	hostName := requester.CollectionHostName(collectionName)
-	path := fmt.Sprintf("/conjoined/%s?action=finish&conjoined_identifier=%s", 
-		url.QueryEscape(key), conjoinedIdentifier)
+	values := url.Values{}
+	values.Set("action", "finish")
+	values.Set("conjoined_identifier", conjoinedIdentifier)
+	path := fmt.Sprintf("/conjoined/%s?%s", url.QueryEscape(key), 
+		values.Encode())
 
 	response, err := requester.Request(method, hostName, path, nil) 
 	if err != nil {
@@ -107,11 +117,26 @@ func FinishConjoined(requester Requester, collectionName string, key string,
     return nil
 }
 
+type ConjoinedParams struct {
+	ConjoinedIdentifier string 
+	ConjoinedPart int
+}
+
 func Archive(requester Requester, collectionName string, key string, 
-	requestBody io.Reader) (string, error) {
+	conjoinedParams *ConjoinedParams, requestBody io.Reader) (string, error) {
 	method := "POST"
 	hostName := requester.CollectionHostName(collectionName)
-	path := fmt.Sprintf("/data/%s", url.QueryEscape(key))
+
+	var path string
+	if conjoinedParams != nil {
+		values := url.Values{}
+		values.Set("conjoined_identifier", conjoinedParams.ConjoinedIdentifier)
+		values.Set("conjoined_part", 
+			strconv.Itoa(conjoinedParams.ConjoinedPart))
+		path = fmt.Sprintf("/data/%s?%s", url.QueryEscape(key), values.Encode())
+	} else {
+		path = fmt.Sprintf("/data/%s", url.QueryEscape(key))
+	}
 
 	response, err := requester.Request(method, hostName, path, requestBody) 
 	if err != nil {
