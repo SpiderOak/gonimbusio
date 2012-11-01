@@ -15,11 +15,21 @@ type WorkUnit struct {
 	size int64
 }
 
+type WorkResult struct {
+	workerId int
+	conjoinedPart int
+	size int64
+	err error
+}
+
 func worker(id int, filePath string, requester nimbusapi.Requester, 
-	work <-chan WorkUnit, results chan<- error) {
+	work <-chan WorkUnit, results chan<- WorkResult) {
+	result := WorkResult{}
+	result.workerId = id
 
 	file, err := os.Open(filePath); if err != nil {
-		results <- err
+		result.err = err
+		results <- result
 		return
 	}
 	defer file.Close()
@@ -27,7 +37,8 @@ func worker(id int, filePath string, requester nimbusapi.Requester,
 	for workUnit := range work {
 
 		_, err = file.Seek(workUnit.offset, 0); if err != nil {
-			results <- err
+			result.err = err
+			results <- result
 			return
 		}
 
@@ -37,6 +48,14 @@ func worker(id int, filePath string, requester nimbusapi.Requester,
 		_, err := nimbusapi.Archive(requester, workUnit.collection, 
 			workUnit.key, &conjoinedParams, io.LimitReader(file, workUnit.size))
 
-		results <- err
+		if err != nil {
+			result.err = err
+			results <- result
+			return
+		}
+
+		result.conjoinedPart = workUnit.conjoinedPart
+		result.size = workUnit.size
+		results <- result
 	}
 }

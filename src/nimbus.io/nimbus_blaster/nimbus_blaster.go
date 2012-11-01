@@ -83,8 +83,8 @@ func main() {
 	log.Printf("conjoined_identifier = %s", conjoinedIdentifier)
 
 	work := make(chan WorkUnit, sliceCount)
-    results := make(chan error, sliceCount)
-	for id := 0; id < sliceCount; id++ {
+    results := make(chan WorkResult, sliceCount)
+	for id := 0; id < flags.connectionCount; id++ {
 		requester, err := nimbusapi.NewRequester(credentials); if err != nil {
 			log.Fatalf("Error creating requester %s\n", err)
 		}
@@ -109,12 +109,17 @@ func main() {
 		work <- workUnit
 	}
 
+	var completedSize int64 = 0
 	for completed := 0; completed < sliceCount; completed++ {
 		workResult := <-results
-		if workResult != nil {
+		if workResult.err != nil {
 			abortConjoined(credentials, flags, conjoinedIdentifier)
-			log.Fatalf("Error in worker %s\n", workResult)
+			log.Fatalf("Error in worker %d %s\n", workResult.workerId, 
+				workResult.err)
 		}
+		completedSize += workResult.size
+		log.Printf("worker %d completed conjoinedPart %d %d bytes", 
+			workResult.workerId, workResult.conjoinedPart, completedSize)
 	}
 	close(work)
 	close(results)
