@@ -19,8 +19,12 @@ func StartConjoined(requester Requester, collectionName string, key string) (
 	path := fmt.Sprintf("/conjoined/%s?%s", url.QueryEscape(key), 
 		values.Encode())
 
-	response, err := requester.Request(method, hostName, path, nil) 
+	request, err := requester.CreateRequest(method, hostName, path, nil) 
 	if err != nil {
+		return "", err
+	}
+
+	response, err := requester.Do(request); if err != nil {
 		return "", err
 	}
 
@@ -52,10 +56,14 @@ func AbortConjoined(requester Requester, collectionName string, key string,
 	path := fmt.Sprintf("/conjoined/%s?%s", url.QueryEscape(key), 
 		values.Encode())
 
-	response, err := requester.Request(method, hostName, path, nil) 
+	request, err := requester.CreateRequest(method, hostName, path, nil) 
 	if err != nil {
 		return err
 	}
+
+	response, err := requester.Do(request); if err != nil {
+		return err
+	}	
 
 	if response.StatusCode != http.StatusOK {
 		err = fmt.Errorf("POST %s %s failed (%d) %s", hostName, path, 
@@ -89,8 +97,12 @@ func FinishConjoined(requester Requester, collectionName string, key string,
 	path := fmt.Sprintf("/conjoined/%s?%s", url.QueryEscape(key), 
 		values.Encode())
 
-	response, err := requester.Request(method, hostName, path, nil) 
+	request, err := requester.CreateRequest(method, hostName, path, nil) 
 	if err != nil {
+		return err
+	}
+
+	response, err := requester.Do(request); if err != nil {
 		return err
 	}
 
@@ -138,8 +150,12 @@ func Archive(requester Requester, collectionName string, key string,
 		path = fmt.Sprintf("/data/%s", url.QueryEscape(key))
 	}
 
-	response, err := requester.Request(method, hostName, path, requestBody) 
+	request, err := requester.CreateRequest(method, hostName, path, requestBody) 
 	if err != nil {
+		return "", err
+	}
+
+	response, err := requester.Do(request); if err != nil {
 		return "", err
 	}
 
@@ -167,8 +183,12 @@ func Retrieve(requester Requester, collectionName string, key string) (
 	hostName := requester.CollectionHostName(collectionName)
 	path := fmt.Sprintf("/data/%s", url.QueryEscape(key))
 
-	response, err := requester.Request(method, hostName, path, nil) 
+	request, err := requester.CreateRequest(method, hostName, path, nil) 
 	if err != nil {
+		return nil, err
+	}
+
+	response, err := requester.Do(request); if err != nil {
 		return nil, err
 	}
 
@@ -186,8 +206,12 @@ func DeleteKey(requester Requester, collectionName string, key string) (error) {
 	hostName := requester.CollectionHostName(collectionName)
 	path := fmt.Sprintf("/data/%s", url.QueryEscape(key))
 
-	response, err := requester.Request(method, hostName, path, nil) 
+	request, err := requester.CreateRequest(method, hostName, path, nil) 
 	if err != nil {
+		return err
+	}
+
+	response, err := requester.Do(request); if err != nil {
 		return err
 	}
 
