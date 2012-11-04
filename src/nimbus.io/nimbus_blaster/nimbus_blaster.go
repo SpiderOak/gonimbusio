@@ -94,7 +94,6 @@ func main() {
 	var offset int64 = 0
 	var size int64 = flags.sliceSize
  	for conjoinedPart := 1; conjoinedPart <= sliceCount; conjoinedPart++ {
- 		offset += size
  		if conjoinedPart == sliceCount {
  			size = info.Size() - offset
  		}
@@ -107,19 +106,22 @@ func main() {
 			size,
 		}
 		work <- workUnit
-	}
+		offset += size
+ 	}
 
 	var completedSize int64 = 0
 	for completed := 0; completed < sliceCount; completed++ {
 		workResult := <-results
 		if workResult.err != nil {
 			abortConjoined(credentials, flags, conjoinedIdentifier)
-			log.Fatalf("Error in worker %d %s\n", workResult.workerId, 
-				workResult.err)
+			log.Fatalf("Error in worker %d %s %s\n", workResult.workerId, 
+				workResult.err, workResult.action)
 		}
 		completedSize += workResult.size
-		log.Printf("worker %d completed conjoinedPart %d %d bytes", 
-			workResult.workerId, workResult.conjoinedPart, completedSize)
+		completedPercent := int(
+			float64(completedSize) / float64(info.Size()) * 100.0)
+		log.Printf("worker %d completed conjoinedPart %d %d%%", 
+			workResult.workerId, workResult.conjoinedPart, completedPercent)
 	}
 	close(work)
 	close(results)

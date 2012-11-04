@@ -20,6 +20,7 @@ type WorkResult struct {
 	conjoinedPart int
 	size int64
 	err error
+	action string
 }
 
 func worker(id int, filePath string, requester nimbusapi.Requester, 
@@ -29,6 +30,7 @@ func worker(id int, filePath string, requester nimbusapi.Requester,
 
 	file, err := os.Open(filePath); if err != nil {
 		result.err = err
+		result.action = "Open"
 		results <- result
 		return
 	}
@@ -38,6 +40,7 @@ func worker(id int, filePath string, requester nimbusapi.Requester,
 
 		_, err = file.Seek(workUnit.offset, 0); if err != nil {
 			result.err = err
+			result.action = "Seek"
 			results <- result
 			return
 		}
@@ -51,6 +54,7 @@ func worker(id int, filePath string, requester nimbusapi.Requester,
 
 		if err != nil {
 			result.err = err
+			result.action = "Archive"
 			results <- result
 			return
 		}

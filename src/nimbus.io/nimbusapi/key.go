@@ -75,14 +75,13 @@ func AbortConjoined(requester Requester, collectionName string, key string,
 	responseBody, err := ioutil.ReadAll(response.Body); if err != nil {
 		return err
 	}
-	var conjoinedMap map[string]string
+	var conjoinedMap map[string]bool
 	err = json.Unmarshal(responseBody, &conjoinedMap); if err != nil {
         return err
     }
 
-    if conjoinedMap["success"] != "true" {
-    	return fmt.Errorf("conjoined action=abort returned %s", 
-    		conjoinedMap["success"])
+    if !conjoinedMap["success"] {
+    	return fmt.Errorf("conjoined action=abort returned false")
     }
 
     return nil
@@ -116,14 +115,13 @@ func FinishConjoined(requester Requester, collectionName string, key string,
 	responseBody, err := ioutil.ReadAll(response.Body); if err != nil {
 		return err
 	}
-	var conjoinedMap map[string]string
+	var conjoinedMap map[string]bool
 	err = json.Unmarshal(responseBody, &conjoinedMap); if err != nil {
         return err
     }
 
-    if conjoinedMap["success"] != "true" {
-    	return fmt.Errorf("conjoined action=abort returned %s", 
-    		conjoinedMap["success"])
+    if !conjoinedMap["success"] {
+    	return fmt.Errorf("conjoined action=finish returned false")
     }
 
     return nil

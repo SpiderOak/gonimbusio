@@ -4,6 +4,22 @@
 		"selected_items":
 		[
 			[
+				"P",
+				"Println	 ƒ"
+			],
+			[
+				"con",
+				"contentLength	int64 ν"
+			],
+			[
+				"C",
+				"ContentLength	int64 ν"
+			],
+			[
+				"R",
+				"Response	struct ʈ"
+			],
+			[
 				"Req",
 				"RequestParams	struct ʈ"
 			],
@@ -56,14 +72,6 @@
 				"DeleteBucketFunction	ActionFunction ν"
 			],
 			[
-				"C",
-				"CreateBucket	 Ɩ"
-			],
-			[
-				"R",
-				"RunSimulation	error ƒ"
-			],
-			[
 				"T",
 				"Time	struct ʈ"
 			],
@@ -94,10 +102,6 @@
 			[
 				"r",
 				"RFC822	 Ɩ"
-			],
-			[
-				"P",
-				"Printf	n int, err error ƒ"
 			],
 			[
 				"a",
@@ -179,7 +183,7 @@
 			"file": "nimbus_blaster/nimbus_blaster.go",
 			"settings":
 			{
-				"buffer_size": 3672,
+				"buffer_size": 3778,
 				"line_ending": "Unix"
 			}
 		},
@@ -187,7 +191,7 @@
 			"file": "nimbus_blaster/worker.go",
 			"settings":
 			{
-				"buffer_size": 1129,
+				"buffer_size": 1243,
 				"line_ending": "Unix"
 			}
 		},
@@ -195,7 +199,7 @@
 			"file": "nimbusapi/key.go",
 			"settings":
 			{
-				"buffer_size": 5735,
+				"buffer_size": 6206,
 				"line_ending": "Unix"
 			}
 		},
@@ -208,13 +212,18 @@
 			}
 		},
 		{
-			"contents": "package nimbusapi\n\nimport (\n	\"fmt\"\n	\"io\"\n	\"net/http\"\n	\"os\"\n	\"strconv\"\n	\"time\"\n)\n\nconst (\n	defaultServiceDomain = \"nimbus.io\"\n	defaultServicePort   = 443\n)\n\ntype client struct {\n	credentials   *Credentials\n	httpClient    *http.Client\n	serviceDomain string\n	servicePort   int\n}\n\ntype RequestParams struct {\n	headers http.Header\n	body io.Reader\n}\n\ntype Requester interface {\n	DefaultHostName() string\n	CollectionHostName(collectionName string) string\n	Request(method string, hostName string, path string, \n		params *RequestParams) (*Response, error)\n}\n\ntype Response struct {\n	StatusCode int\n	Status     string\n	Body       io.ReadCloser\n}\n\nfunc NewRequester(credentials *Credentials) (Requester, error) {\n	serviceDomain := os.Getenv(\"NIMBUS_IO_SERVICE_DOMAIN\")\n	if serviceDomain == \"\" {\n		serviceDomain = defaultServiceDomain\n	}\n\n	servicePortStr := os.Getenv(\"NIMBUS_IO_SERVICE_PORT\")\n	if servicePortStr == \"\" {\n		servicePortStr = fmt.Sprintf(\"%d\", defaultServicePort)\n	}\n	servicePort, err := strconv.Atoi(servicePortStr)\n	if err != nil {\n		return nil, err\n	}\n\n	// TODO: the web server is sending a \"Connection: close\" header\n	// We should deal with that\n	httpTransport := &http.Transport{DisableKeepAlives: true}\n	httpClient := &http.Client{Transport: httpTransport}\n\n	requester := client{\n		credentials,\n		httpClient,\n		serviceDomain,\n		servicePort,\n	}\n\n	return &requester, nil\n}\n\nfunc (client *client) DefaultHostName() string {\n	return fmt.Sprintf(\"%s:%d\", client.serviceDomain, client.servicePort)\n}\n\nfunc (client *client) CollectionHostName(collectionName string) string {\n	return fmt.Sprintf(\"%s.%s\", collectionName, client.DefaultHostName())\n}\n\nfunc (client *client) Request(method string, hostName string, path string,\n	params *RequestParams) (*Response, error) {\n\n	current_time := time.Now()\n	timestamp := current_time.Unix()\n	uri := fmt.Sprintf(\"http://%s%s\", hostName, path)\n\n	request, err := http.NewRequest(method, uri, params.body)\n	if err != nil {\n		return nil, err\n	}\n\n	authString, err := ComputeAuthString(client.credentials, method, timestamp,\n		path)\n	if err != nil {\n		return nil, err\n	}\n	request.Header.Add(\"Authorization\", authString)\n	request.Header.Add(\"x-nimbus-io-timestamp\", fmt.Sprintf(\"%d\", timestamp))\n	request.Header.Add(\"agent\", \"gonimbusio/1.0\")\n\n	response, err := client.httpClient.Do(request)\n	if err != nil {\n		return nil, err\n	}\n\n	return &Response{response.StatusCode, response.Status, response.Body}, nil\n}\n",
 			"file": "nimbusapi/client.go",
-			"file_size": 2354,
-			"file_write_time": 1347726584000000,
 			"settings":
 			{
-				"buffer_size": 2443,
+				"buffer_size": 2569,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "nimbusapi/collection.go",
+			"settings":
+			{
+				"buffer_size": 4407,
 				"line_ending": "Unix"
 			}
 		}
@@ -302,6 +311,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"CreateRequest",
+			"response, err := requester.Request",
 			"conjoinedPart",
 			"func(config *Config)",
 			"json",
@@ -334,6 +345,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"request, err := requester.CreateRequest",
 			"func(requester nimbusapi.Requester, config *Config)",
 			",",
 			"nimbusapi",
@@ -349,7 +361,7 @@
 	"groups":
 	[
 		{
-			"selected": 5,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -384,15 +396,15 @@
 					"file": "nimbus_blaster/nimbus_blaster.go",
 					"settings":
 					{
-						"buffer_size": 3672,
+						"buffer_size": 3778,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2209,
-								2209
+								3244,
+								3244
 							]
 						],
 						"settings":
@@ -401,7 +413,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1258.0,
+						"translation.y": 1614.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -411,15 +423,15 @@
 					"file": "nimbus_blaster/worker.go",
 					"settings":
 					{
-						"buffer_size": 1129,
+						"buffer_size": 1243,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1103,
-								1103
+								1243,
+								1243
 							]
 						],
 						"settings":
@@ -428,7 +440,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 478.0,
+						"translation.y": 451.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -438,15 +450,15 @@
 					"file": "nimbusapi/key.go",
 					"settings":
 					{
-						"buffer_size": 5735,
+						"buffer_size": 6206,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								669,
-								669
+								3147,
+								3147
 							]
 						],
 						"settings":
@@ -455,7 +467,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2044.0,
+						"translation.y": 1573.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -482,7 +494,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 393.0,
+						"translation.y": 502.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -492,15 +504,15 @@
 					"file": "nimbusapi/client.go",
 					"settings":
 					{
-						"buffer_size": 2443,
+						"buffer_size": 2569,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1941,
-								1941
+								1797,
+								1797
 							]
 						],
 						"settings":
@@ -509,7 +521,34 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1131.0,
+						"translation.y": 1148.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "nimbusapi/collection.go",
+					"settings":
+					{
+						"buffer_size": 4407,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3953,
+								3953
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Go/Go.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2338.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
