@@ -135,7 +135,8 @@ type ConjoinedParams struct {
 }
 
 func Archive(requester Requester, collectionName string, key string, 
-	conjoinedParams *ConjoinedParams, requestBody io.Reader) (string, error) {
+	conjoinedParams *ConjoinedParams, contentLength int64, 
+	requestBody io.Reader) (string, error) {
 	method := "POST"
 	hostName := requester.CollectionHostName(collectionName)
 
@@ -154,6 +155,7 @@ func Archive(requester Requester, collectionName string, key string,
 	if err != nil {
 		return "", err
 	}
+	request.ContentLength = contentLength
 
 	response, err := requester.Do(request); if err != nil {
 		return "", err

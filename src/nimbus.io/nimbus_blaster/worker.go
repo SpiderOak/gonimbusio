@@ -46,7 +46,8 @@ func worker(id int, filePath string, requester nimbusapi.Requester,
 			workUnit.conjoinedIdentifier, workUnit.conjoinedPart}
 
 		_, err := nimbusapi.Archive(requester, workUnit.collection, 
-			workUnit.key, &conjoinedParams, io.LimitReader(file, workUnit.size))
+			workUnit.key, &conjoinedParams, workUnit.size, 
+			io.LimitReader(file, workUnit.size))
 
 		if err != nil {
 			result.err = err
