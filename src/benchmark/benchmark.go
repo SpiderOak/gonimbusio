@@ -10,18 +10,21 @@ import (
 
 func main() {
 	log.Println("program starts")
-	flags, err := loadFlags(); if err != nil {
+	flags, err := loadFlags()
+	if err != nil {
 		log.Fatalf("Unable to load flags: %s", err)
 	}
 	log.Printf("flags = %v", flags)
 
-	config, err := LoadConfig(flags.ConfigPath); if err != nil {
+	config, err := LoadConfig(flags.ConfigPath)
+	if err != nil {
 		log.Fatalf("Unable to load config from %s %s", flags.ConfigPath, err)
 	}
 	log.Printf("config = %v", config)
 
-	dirSlice, err := ioutil.ReadDir(flags.UserIdentityDir); if err != nil {
-		log.Fatalf("Unable to read user identity dir %s %s", 
+	dirSlice, err := ioutil.ReadDir(flags.UserIdentityDir)
+	if err != nil {
+		log.Fatalf("Unable to read user identity dir %s %s",
 			flags.UserIdentityDir, err)
 	}
 
@@ -39,20 +42,21 @@ func main() {
 		credentialsPath := path.Join(flags.UserIdentityDir, fileInfo.Name())
 		credentials, err := nimbusapi.LoadCredentialsFromPath(credentialsPath)
 		if err != nil {
-			log.Fatalf("Unable to load credentials %s %s", 
+			log.Fatalf("Unable to load credentials %s %s",
 				credentialsPath, err)
 		}
-		requester, err := nimbusapi.NewRequester(credentials); if err != nil {
+		requester, err := nimbusapi.NewRequester(credentials)
+		if err != nil {
 			log.Fatalf("NewRequester failed %s\n", err)
-		}		
+		}
 		go RunSimulation(credentials, requester, config, finishTime, infoChan)
 		simCount += 1
 	}
 
 	for completedCount := 0; completedCount < simCount; {
 		select {
-		case userInfo := <- infoChan:
-			log.Printf("%s %s %s", userInfo.UserName, userInfo.Status, 
+		case userInfo := <-infoChan:
+			log.Printf("%s %s %s", userInfo.UserName, userInfo.Status,
 				userInfo.Text)
 			switch userInfo.Status {
 			case UserStatusStarted:
@@ -66,5 +70,5 @@ func main() {
 		}
 	}
 
-	log.Println("program ends")	
+	log.Println("program ends")
 }

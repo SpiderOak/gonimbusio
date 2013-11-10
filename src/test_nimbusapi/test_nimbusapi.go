@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	testKey = "test key"
+	testKey  = "test key"
 	testBody = "test body"
 )
 
@@ -30,51 +30,52 @@ func main() {
 		log.Fatalf("Error loading credentials %s\n", err)
 	}
 
-	requester, err := nimbusapi.NewRequester(credentials); if err != nil {
+	requester, err := nimbusapi.NewRequester(credentials)
+	if err != nil {
 		log.Fatalf("NewRequester failed %s\n", err)
 	}
 
-	collectionList, err := nimbusapi.ListCollections(requester, 
+	collectionList, err := nimbusapi.ListCollections(requester,
 		credentials.Name)
 	if err != nil {
 		log.Fatalf("Request failed %s\n", err)
 	}
 	fmt.Printf("starting collection list = %v\n", collectionList)
 
-	collectionName := nimbusapi.ReservedCollectionName(credentials.Name, 
+	collectionName := nimbusapi.ReservedCollectionName(credentials.Name,
 		fmt.Sprintf("test-%05d", len(collectionList)))
-	collection, err := nimbusapi.CreateCollection(requester, 
+	collection, err := nimbusapi.CreateCollection(requester,
 		credentials.Name, collectionName)
-	if err != nil{
+	if err != nil {
 		log.Fatalf("CreateCollection failed %s\n", err)
 	}
 	fmt.Printf("created collection = %v\n", collection)
 
 	archiveBody := strings.NewReader(testBody)
-	versionIdentifier, err := nimbusapi.Archive(requester, collectionName, 
+	versionIdentifier, err := nimbusapi.Archive(requester, collectionName,
 		testKey, nil, archiveBody)
-	if err != nil{
+	if err != nil {
 		log.Fatalf("Archive failed %s\n", err)
 	}
 	fmt.Printf("archived key '%s' to version %v\n", testKey, versionIdentifier)
 
-	retrieveBody, err := nimbusapi.Retrieve(requester, collectionName, 
+	retrieveBody, err := nimbusapi.Retrieve(requester, collectionName,
 		testKey)
-	if err != nil{
+	if err != nil {
 		log.Fatalf("Retrieve failed %s\n", err)
 	}
 
 	retrieveResult, err := ioutil.ReadAll(retrieveBody)
 	retrieveBody.Close()
-	if err != nil{
+	if err != nil {
 		log.Fatalf("read failed %s\n", err)
 	}
-	fmt.Printf("retrieved key '%s'; matches testBody = %v\n", testKey, 
+	fmt.Printf("retrieved key '%s'; matches testBody = %v\n", testKey,
 		string(retrieveResult) == testBody)
 
-	keySlice, _, err := nimbusapi.ListKeysInCollection(requester, 
+	keySlice, _, err := nimbusapi.ListKeysInCollection(requester,
 		collectionName)
-	if err != nil{
+	if err != nil {
 		log.Fatalf("ListKeysInCollection failed %s\n", err)
 	}
 	for _, keyEntry := range keySlice {
@@ -85,9 +86,9 @@ func main() {
 		}
 	}
 
-	success, err := nimbusapi.DeleteCollection(requester, credentials.Name, 
+	success, err := nimbusapi.DeleteCollection(requester, credentials.Name,
 		collectionName)
-	if err != nil{
+	if err != nil {
 		log.Fatalf("DeleteCollection failed %s\n", err)
 	}
 	fmt.Printf("deleted collection = %s %v\n", collectionName, success)

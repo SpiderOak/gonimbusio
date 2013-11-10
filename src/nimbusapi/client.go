@@ -16,7 +16,7 @@ const (
 
 type client struct {
 	credentials   *Credentials
-	protocol string
+	protocol      string
 	httpClient    *http.Client
 	serviceDomain string
 	servicePort   int
@@ -25,7 +25,7 @@ type client struct {
 type Requester interface {
 	DefaultHostName() string
 	CollectionHostName(collectionName string) string
-	CreateRequest(method string, hostName string, path string, 
+	CreateRequest(method string, hostName string, path string,
 		body io.Reader) (*http.Request, error)
 	Do(*http.Request) (*http.Response, error)
 }

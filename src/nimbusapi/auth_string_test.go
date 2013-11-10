@@ -14,7 +14,7 @@ type testEntry struct {
 
 // test data generated from python library lumberyard
 var testData = []testEntry{
-	testEntry{
+	{
 		Credentials{
 			"motoboto-benchmark-000",
 			2,
@@ -25,7 +25,7 @@ var testData = []testEntry{
 		"/data/xxx",
 		"NIMBUS.IO 2:c4d946d1089f11d310ae8bd8f52501212a3eb50cc800b0688d3df7bf65f04ce7",
 	},
-	testEntry{
+	{
 		Credentials{
 			"motoboto-benchmark-001",
 			3,
@@ -36,7 +36,7 @@ var testData = []testEntry{
 		"/data/xxx",
 		"NIMBUS.IO 3:8b26220618f8da55f371d3108221f4fd982f4e61b02d8eb00ee8cc3c50ca2707",
 	},
-	testEntry{
+	{
 		Credentials{
 			"motoboto-benchmark-002",
 			4,
@@ -47,7 +47,7 @@ var testData = []testEntry{
 		"/data/xxx",
 		"NIMBUS.IO 4:45e71c4839d68d2e2c67c80b916e1cb3e75abd6bc84c4499c00a770dbaf62785",
 	},
-	testEntry{
+	{
 		Credentials{
 			"motoboto-benchmark-003",
 			5,
@@ -58,7 +58,7 @@ var testData = []testEntry{
 		"/data/xxx",
 		"NIMBUS.IO 5:015c53c88a0531ef1f998fcfee01612627de2c9de8cbaa76d1c99b0de0f32d6d",
 	},
-	testEntry{
+	{
 		Credentials{
 			"motoboto-benchmark-004",
 			6,
@@ -69,7 +69,7 @@ var testData = []testEntry{
 		"/data/xxx",
 		"NIMBUS.IO 6:ab6b13b21230e142c5ca8de245953001a6877e434c07ff991074ff8ec95f487c",
 	},
-	testEntry{
+	{
 		Credentials{
 			"motoboto-benchmark-005",
 			7,
@@ -80,7 +80,7 @@ var testData = []testEntry{
 		"/data/xxx",
 		"NIMBUS.IO 7:87949c05b6b566332a2d42d8de66b47b9828d7e8ebedceac1bd128c23b268100",
 	},
-	testEntry{
+	{
 		Credentials{
 			"motoboto-benchmark-006",
 			8,
@@ -91,7 +91,7 @@ var testData = []testEntry{
 		"/data/xxx",
 		"NIMBUS.IO 8:317af9956227a5f3ec1f86579df48a1c85dca470bb8cc999cf686b7dd030935d",
 	},
-	testEntry{
+	{
 		Credentials{
 			"motoboto-benchmark-007",
 			9,
@@ -102,7 +102,7 @@ var testData = []testEntry{
 		"/data/xxx",
 		"NIMBUS.IO 9:23cfee26b7329e0f672c1b77336f2b3084fc0c0e4cefac88391cd124fd3948d2",
 	},
-	testEntry{
+	{
 		Credentials{
 			"motoboto-benchmark-008",
 			10,
@@ -113,7 +113,7 @@ var testData = []testEntry{
 		"/data/xxx",
 		"NIMBUS.IO 10:79a8ca622bcba5999e4a63adccb5383f7b850b187cb68b9ba79da927612f8660",
 	},
-	testEntry{
+	{
 		Credentials{
 			"motoboto-benchmark-009",
 			11,

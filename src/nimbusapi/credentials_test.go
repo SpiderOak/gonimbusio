@@ -12,11 +12,11 @@ type testCredentialsEntry struct {
 
 // test data generated from python library lumberyard
 var testCredentialsData = []testCredentialsEntry{
-	testCredentialsEntry{
+	{
 		`Username motoboto-benchmark-000
 AuthKeyId 1
 AuthKey 4TVjaSkh5GNENBqs+GX2OUrDQlofOgzP/0QB+F1+TYY
-`,		
+`,
 		Credentials{
 			"motoboto-benchmark-000",
 			1,
