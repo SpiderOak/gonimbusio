@@ -128,7 +128,7 @@ var testData = []testEntry{
 
 func TestAuthString(t *testing.T) {
 	for _, entry := range testData {
-		authString, err:= ComputeAuthString(&entry.credentials, entry.method,
+		authString, err := ComputeAuthString(&entry.credentials, entry.method,
 			entry.timestamp, entry.uri)
 		if err != nil {
 			t.Fatalf("%s, %s, %s", authString, entry.authString, err)

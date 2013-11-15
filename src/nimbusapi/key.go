@@ -190,14 +190,14 @@ func Archive(requester Requester, collectionName string, key string,
 }
 
 type RetrieveParams struct {
-	VersionID string
-	SliceOffset int 
-	SliceSize int 
-	ModifiedSince interface{}
+	VersionID      string
+	SliceOffset    int
+	SliceSize      int
+	ModifiedSince  interface{}
 	UnodifiedSince interface{}
- }
+}
 
-func Retrieve(requester Requester, collectionName string, key string, 
+func Retrieve(requester Requester, collectionName string, key string,
 	retrieveParams RetrieveParams) (io.ReadCloser, error) {
 
 	if retrieveParams.VersionID != "" {
@@ -226,7 +226,7 @@ func Retrieve(requester Requester, collectionName string, key string,
 
 		if retrieveParams.SliceSize > 0 {
 			rangeArg = fmt.Sprintf("bytes=%d-%d", retrieveParams.SliceOffset,
-				retrieveParams.SliceOffset + retrieveParams.SliceSize)
+				retrieveParams.SliceOffset+retrieveParams.SliceSize)
 		} else {
 			rangeArg = fmt.Sprintf("bytes=%d-", retrieveParams.SliceOffset)
 		}
