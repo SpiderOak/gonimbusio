@@ -189,8 +189,27 @@ func Archive(requester Requester, collectionName string, key string,
 	return versionMap["version_identifier"], nil
 }
 
-func Retrieve(requester Requester, collectionName string, key string) (
-	io.ReadCloser, error) {
+type RetrieveParams struct {
+	VersionID string
+	SliceOffset int 
+	SliceSize int 
+	ModifiedSince interface{}
+	UnodifiedSince interface{}
+ }
+
+func Retrieve(requester Requester, collectionName string, key string, 
+	retrieveParams RetrieveParams) (io.ReadCloser, error) {
+
+	if retrieveParams.VersionID != "" {
+		return nil, fmt.Errorf("not implemented: retrieveParams.VersionID")
+	}
+	if retrieveParams.ModifiedSince != nil {
+		return nil, fmt.Errorf("not implemented: retrieveParams.ModifiedSince")
+	}
+	if retrieveParams.UnodifiedSince != nil {
+		return nil, fmt.Errorf("not implemented: retrieveParams.UnodifiedSince")
+	}
+
 	method := "GET"
 	hostName := requester.CollectionHostName(collectionName)
 	path := fmt.Sprintf("/data/%s", url.QueryEscape(key))
@@ -200,12 +219,28 @@ func Retrieve(requester Requester, collectionName string, key string) (
 		return nil, err
 	}
 
+	successfulStatusCode := http.StatusOK
+
+	if retrieveParams.SliceOffset > 0 || retrieveParams.SliceSize > 0 {
+		var rangeArg string
+
+		if retrieveParams.SliceSize > 0 {
+			rangeArg = fmt.Sprintf("bytes=%d-%d", retrieveParams.SliceOffset,
+				retrieveParams.SliceOffset + retrieveParams.SliceSize)
+		} else {
+			rangeArg = fmt.Sprintf("bytes=%d-", retrieveParams.SliceOffset)
+		}
+
+		request.Header.Add("Range", rangeArg)
+		successfulStatusCode = http.StatusPartialContent
+	}
+
 	response, err := requester.Do(request)
 	if err != nil {
 		return nil, err
 	}
 
-	if response.StatusCode != http.StatusOK {
+	if response.StatusCode != successfulStatusCode {
 		err = fmt.Errorf("GET %s %s failed (%d) %s", hostName, path,
 			response.StatusCode, response.Body)
 		return nil, err

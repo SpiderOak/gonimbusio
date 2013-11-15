@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"nimbus.io/nimbusapi"
+	"nimbusapi"
 	"strings"
 )
 
@@ -60,7 +60,7 @@ func main() {
 	fmt.Printf("archived key '%s' to version %v\n", testKey, versionIdentifier)
 
 	retrieveBody, err := nimbusapi.Retrieve(requester, collectionName,
-		testKey)
+		testKey, nimbusapi.RetrieveParams{})
 	if err != nil {
 		log.Fatalf("Retrieve failed %s\n", err)
 	}
