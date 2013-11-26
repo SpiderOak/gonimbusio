@@ -1,9 +1,10 @@
 package main
 
 import (
+	"github.com/SpiderOak/gonimbusio/nimbusapi"
+
 	"io/ioutil"
 	"log"
-	"nimbus.io/nimbusapi"
 	"path"
 	"time"
 )

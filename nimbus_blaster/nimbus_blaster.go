@@ -1,8 +1,9 @@
 package main
 
 import (
+	"github.com/SpiderOak/gonimbusio/nimbusapi"
+
 	"log"
-	"nimbusapi"
 	"os"
 )
 

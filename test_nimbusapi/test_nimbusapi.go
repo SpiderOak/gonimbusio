@@ -3,9 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+
+	"github.com/SpiderOak/gonimbusio/nimbusapi"
+
 	"io/ioutil"
 	"log"
-	"nimbusapi"
 	"strings"
 )
 

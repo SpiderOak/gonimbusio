@@ -1,4 +1,4 @@
 gonimbusio
 ==========
 
-go language interface to nimbus.io storagte 
+go language interface to nimbus.io storage 
