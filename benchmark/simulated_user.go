@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+
+	"github.com/SpiderOak/gonimbusio/nimbusapi"
+
 	"math/rand"
-	"nimbus.io/nimbusapi"
 	"time"
 )
 
