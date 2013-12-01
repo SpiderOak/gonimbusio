@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 )
 
 type Collection struct {
@@ -121,6 +122,54 @@ func ListKeysInCollection(requester Requester, collectionName string) (
 	method := "GET"
 	hostName := requester.CollectionHostName(collectionName)
 	path := "/data/"
+
+	request, err := requester.CreateRequest(method, hostName, path, nil)
+	if err != nil {
+		return nil, false, err
+	}
+
+	response, err := requester.Do(request)
+	if err != nil {
+		return nil, false, err
+	}
+
+	if response.StatusCode != http.StatusOK {
+		err = fmt.Errorf("GET %s %s failed (%d) %s", hostName, path,
+			response.StatusCode, response.Body)
+		return nil, false, err
+	}
+
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, false, err
+	}
+
+	var listResult listKeyResult
+	err = json.Unmarshal(body, &listResult)
+	if err != nil {
+		return nil, false, err
+	}
+	fmt.Printf("%v\n", listResult)
+
+	return listResult.KeySlice, listResult.Truncated, nil
+}
+
+func ListVersionsInCollection(requester Requester, collectionName string, 
+	prefix string) (
+	[]Key, bool, error) {
+
+	method := "GET"
+	hostName := requester.CollectionHostName(collectionName)
+
+	var path string
+	if prefix == "" {
+		path = "/?versions"
+	} else {
+		values := url.Values{}
+		values.Set("prefix", prefix)
+		path = fmt.Sprintf("/?versions&%s", values.Encode())
+	}
 
 	request, err := requester.CreateRequest(method, hostName, path, nil)
 	if err != nil {

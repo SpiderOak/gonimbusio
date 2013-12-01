@@ -190,14 +190,14 @@ func Archive(requester Requester, collectionName string, key string,
 }
 
 type RetrieveParams struct {
-	VersionID      string
-	SliceOffset    int
-	SliceSize      int
-	ModifiedSince  interface{}
+	VersionID string
+	SliceOffset int 
+	SliceSize int 
+	ModifiedSince interface{}
 	UnodifiedSince interface{}
-}
+ }
 
-func Retrieve(requester Requester, collectionName string, key string,
+func Retrieve(requester Requester, collectionName string, key string, 
 	retrieveParams RetrieveParams) (io.ReadCloser, error) {
 
 	if retrieveParams.VersionID != "" {
@@ -226,12 +226,12 @@ func Retrieve(requester Requester, collectionName string, key string,
 
 		if retrieveParams.SliceSize > 0 {
 			rangeArg = fmt.Sprintf("bytes=%d-%d", retrieveParams.SliceOffset,
-				retrieveParams.SliceOffset+retrieveParams.SliceSize)
+				retrieveParams.SliceOffset + retrieveParams.SliceSize - 1)
 		} else {
 			rangeArg = fmt.Sprintf("bytes=%d-", retrieveParams.SliceOffset)
 		}
 
-		request.Header.Add("Range", rangeArg)
+		request.Header.Add("range", rangeArg)
 		successfulStatusCode = http.StatusPartialContent
 	}
 
@@ -250,9 +250,22 @@ func Retrieve(requester Requester, collectionName string, key string,
 }
 
 func DeleteKey(requester Requester, collectionName string, key string) error {
+	return DeleteVersion(requester, collectionName, key, "")
+}
+
+func DeleteVersion(requester Requester, collectionName string, key string, 
+	versionIdentifier string) error {
 	method := "DELETE"
 	hostName := requester.CollectionHostName(collectionName)
-	path := fmt.Sprintf("/data/%s", url.QueryEscape(key))
+
+	var path string
+	if versionIdentifier == "" {
+		path = fmt.Sprintf("/data/%s", url.QueryEscape(key))
+	} else {
+		values := url.Values{}
+		values.Add("version", versionIdentifier)
+		path = fmt.Sprintf("/data/%s?%s", url.QueryEscape(key), values.Encode())		
+	}
 
 	request, err := requester.CreateRequest(method, hostName, path, nil)
 	if err != nil {
