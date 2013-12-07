@@ -190,29 +190,34 @@ func Archive(requester Requester, collectionName string, key string,
 }
 
 type RetrieveParams struct {
-	VersionID      string
-	SliceOffset    int
-	SliceSize      int
-	ModifiedSince  interface{}
-	UnodifiedSince interface{}
+	VersionID       string
+	SliceOffset     int
+	SliceSize       int
+	ModifiedSince   interface{}
+	UnmodifiedSince interface{}
 }
 
 func Retrieve(requester Requester, collectionName string, key string,
 	retrieveParams RetrieveParams) (io.ReadCloser, error) {
 
-	if retrieveParams.VersionID != "" {
-		return nil, fmt.Errorf("not implemented: retrieveParams.VersionID")
-	}
 	if retrieveParams.ModifiedSince != nil {
 		return nil, fmt.Errorf("not implemented: retrieveParams.ModifiedSince")
 	}
-	if retrieveParams.UnodifiedSince != nil {
-		return nil, fmt.Errorf("not implemented: retrieveParams.UnodifiedSince")
+	if retrieveParams.UnmodifiedSince != nil {
+		return nil, fmt.Errorf("not implemented: retrieveParams.UnmodifiedSince")
 	}
 
 	method := "GET"
 	hostName := requester.CollectionHostName(collectionName)
-	path := fmt.Sprintf("/data/%s", url.QueryEscape(key))
+
+	var path string
+	if retrieveParams.VersionID == "" {
+		path = fmt.Sprintf("/data/%s", url.QueryEscape(key))
+	} else {
+		values := url.Values{}
+		values.Add("version_identifier", retrieveParams.VersionID)
+		path = fmt.Sprintf("/data/%s?%s", url.QueryEscape(key), values.Encode())
+	}
 
 	request, err := requester.CreateRequest(method, hostName, path, nil)
 	if err != nil {
