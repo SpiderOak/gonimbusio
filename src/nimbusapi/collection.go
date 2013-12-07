@@ -150,12 +150,11 @@ func ListKeysInCollection(requester Requester, collectionName string) (
 	if err != nil {
 		return nil, false, err
 	}
-	fmt.Printf("%v\n", listResult)
 
 	return listResult.KeySlice, listResult.Truncated, nil
 }
 
-func ListVersionsInCollection(requester Requester, collectionName string, 
+func ListVersionsInCollection(requester Requester, collectionName string,
 	prefix string) (
 	[]Key, bool, error) {
 
@@ -198,7 +197,6 @@ func ListVersionsInCollection(requester Requester, collectionName string,
 	if err != nil {
 		return nil, false, err
 	}
-	fmt.Printf("%v\n", listResult)
 
 	return listResult.KeySlice, listResult.Truncated, nil
 }

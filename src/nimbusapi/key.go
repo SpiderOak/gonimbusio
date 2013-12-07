@@ -148,7 +148,7 @@ func Archive(requester Requester, collectionName string, key string,
 	hostName := requester.CollectionHostName(collectionName)
 
 	var path string
-	if conjoinedParams != nil {
+	if conjoinedParams != nil && conjoinedParams.ConjoinedIdentifier != "" {
 		values := url.Values{}
 		values.Set("conjoined_identifier", conjoinedParams.ConjoinedIdentifier)
 		values.Set("conjoined_part",
@@ -190,14 +190,14 @@ func Archive(requester Requester, collectionName string, key string,
 }
 
 type RetrieveParams struct {
-	VersionID string
-	SliceOffset int 
-	SliceSize int 
-	ModifiedSince interface{}
+	VersionID      string
+	SliceOffset    int
+	SliceSize      int
+	ModifiedSince  interface{}
 	UnodifiedSince interface{}
- }
+}
 
-func Retrieve(requester Requester, collectionName string, key string, 
+func Retrieve(requester Requester, collectionName string, key string,
 	retrieveParams RetrieveParams) (io.ReadCloser, error) {
 
 	if retrieveParams.VersionID != "" {
@@ -226,7 +226,7 @@ func Retrieve(requester Requester, collectionName string, key string,
 
 		if retrieveParams.SliceSize > 0 {
 			rangeArg = fmt.Sprintf("bytes=%d-%d", retrieveParams.SliceOffset,
-				retrieveParams.SliceOffset + retrieveParams.SliceSize - 1)
+				retrieveParams.SliceOffset+retrieveParams.SliceSize-1)
 		} else {
 			rangeArg = fmt.Sprintf("bytes=%d-", retrieveParams.SliceOffset)
 		}
@@ -253,7 +253,7 @@ func DeleteKey(requester Requester, collectionName string, key string) error {
 	return DeleteVersion(requester, collectionName, key, "")
 }
 
-func DeleteVersion(requester Requester, collectionName string, key string, 
+func DeleteVersion(requester Requester, collectionName string, key string,
 	versionIdentifier string) error {
 	method := "DELETE"
 	hostName := requester.CollectionHostName(collectionName)
@@ -264,7 +264,7 @@ func DeleteVersion(requester Requester, collectionName string, key string,
 	} else {
 		values := url.Values{}
 		values.Add("version", versionIdentifier)
-		path = fmt.Sprintf("/data/%s?%s", url.QueryEscape(key), values.Encode())		
+		path = fmt.Sprintf("/data/%s?%s", url.QueryEscape(key), values.Encode())
 	}
 
 	request, err := requester.CreateRequest(method, hostName, path, nil)
