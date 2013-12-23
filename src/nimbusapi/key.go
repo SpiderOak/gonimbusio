@@ -30,8 +30,8 @@ func StartConjoined(requester Requester, collectionName string, key string) (
 	}
 
 	if response.StatusCode != http.StatusOK {
-		err = fmt.Errorf("POST %s %s failed (%d) %s", hostName, path,
-			response.StatusCode, response.Body)
+		err = HTTPError{response.StatusCode,
+			fmt.Sprintf("POST %s %s failed %s", hostName, path, response.Body)}
 		return "", err
 	}
 
@@ -70,8 +70,8 @@ func AbortConjoined(requester Requester, collectionName string, key string,
 	}
 
 	if response.StatusCode != http.StatusOK {
-		err = fmt.Errorf("POST %s %s failed (%d) %s", hostName, path,
-			response.StatusCode, response.Body)
+		err = HTTPError{response.StatusCode,
+			fmt.Sprintf("POST %s %s failed %s", hostName, path, response.Body)}
 		return err
 	}
 
@@ -113,8 +113,8 @@ func FinishConjoined(requester Requester, collectionName string, key string,
 	}
 
 	if response.StatusCode != http.StatusOK {
-		err = fmt.Errorf("POST %s %s failed (%d) %s", hostName, path,
-			response.StatusCode, response.Body)
+		err = HTTPError{response.StatusCode,
+			fmt.Sprintf("POST %s %s failed %s", hostName, path, response.Body)}
 		return err
 	}
 
@@ -170,8 +170,8 @@ func Archive(requester Requester, collectionName string, key string,
 	}
 
 	if response.StatusCode != http.StatusOK {
-		err = fmt.Errorf("POST %s %s failed (%d) %s", hostName, path,
-			response.StatusCode, response.Body)
+		err = HTTPError{response.StatusCode,
+			fmt.Sprintf("POST %s %s failed %s", hostName, path, response.Body)}
 		return "", err
 	}
 
@@ -246,9 +246,15 @@ func Retrieve(requester Requester, collectionName string, key string,
 	}
 
 	if response.StatusCode != successfulStatusCode {
-		err = fmt.Errorf("GET %s %s failed (%d) %s", hostName, path,
-			response.StatusCode, response.Body)
+		err = HTTPError{response.StatusCode,
+			fmt.Sprintf("GET %s %s failed %s", hostName, path, response.Body)}
 		return nil, err
+	}
+
+	if retrieveParams.SliceSize > 0 && response.ContentLength != -1 &&
+		response.ContentLength != int64(retrieveParams.SliceSize) {
+		return nil, fmt.Errorf("ContentLength mismatch: expected %d found %d",
+			retrieveParams.SliceSize, response.ContentLength)
 	}
 
 	return response.Body, nil
@@ -283,8 +289,8 @@ func DeleteVersion(requester Requester, collectionName string, key string,
 	}
 
 	if response.StatusCode != http.StatusOK {
-		err = fmt.Errorf("POST %s %s failed (%d) %s", hostName, path,
-			response.StatusCode, response.Body)
+		err = HTTPError{response.StatusCode,
+			fmt.Sprintf("DELETE %s %s failed %s", hostName, path, response.Body)}
 		return err
 	}
 
