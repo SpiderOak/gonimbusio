@@ -1,3 +1,7 @@
+/*blaster
+
+  A program to upload large files to nimbus.io in parallel as conjoined archive
+*/
 package main
 
 import (
@@ -6,7 +10,7 @@ import (
 	"os"
 )
 
-func startConjoined(credentials *nimbusapi.Credentials, flags Flags) (
+func startConjoined(credentials *nimbusapi.Credentials, flags flags) (
 	string, error) {
 	requester, err := nimbusapi.NewRequester(credentials)
 	if err != nil {
@@ -21,7 +25,7 @@ func startConjoined(credentials *nimbusapi.Credentials, flags Flags) (
 
 	return conjoinedIdentifier, nil
 }
-func finishConjoined(credentials *nimbusapi.Credentials, flags Flags,
+func finishConjoined(credentials *nimbusapi.Credentials, flags flags,
 	conjoinedIdentifier string) error {
 	requester, err := nimbusapi.NewRequester(credentials)
 	if err != nil {
@@ -36,7 +40,7 @@ func finishConjoined(credentials *nimbusapi.Credentials, flags Flags,
 
 	return nil
 }
-func abortConjoined(credentials *nimbusapi.Credentials, flags Flags,
+func abortConjoined(credentials *nimbusapi.Credentials, flags flags,
 	conjoinedIdentifier string) {
 	requester, err := nimbusapi.NewRequester(credentials)
 	if err != nil {
@@ -49,7 +53,7 @@ func abortConjoined(credentials *nimbusapi.Credentials, flags Flags,
 
 func main() {
 	log.Println("program starts")
-	flags, err := loadFlags()
+	flags, err := loadflags()
 	if err != nil {
 		log.Fatalf("Unable to load flags: %s\n", err)
 	}
@@ -88,8 +92,8 @@ func main() {
 	}
 	log.Printf("conjoined_identifier = %s", conjoinedIdentifier)
 
-	work := make(chan WorkUnit, sliceCount)
-	results := make(chan WorkResult, sliceCount)
+	work := make(chan workUnit, sliceCount)
+	results := make(chan workResult, sliceCount)
 	for id := 0; id < flags.connectionCount; id++ {
 		requester, err := nimbusapi.NewRequester(credentials)
 		if err != nil {
@@ -98,13 +102,13 @@ func main() {
 		go worker(id, flags.filePath, requester, work, results)
 	}
 
-	var offset int64 = 0
-	var size int64 = flags.sliceSize
+	var offset int64
+	var size = flags.sliceSize
 	for conjoinedPart := 1; conjoinedPart <= sliceCount; conjoinedPart++ {
 		if conjoinedPart == sliceCount {
 			size = info.Size() - offset
 		}
-		workUnit := WorkUnit{
+		workUnit := workUnit{
 			flags.collection,
 			flags.key,
 			conjoinedIdentifier,
@@ -116,19 +120,19 @@ func main() {
 		offset += size
 	}
 
-	var completedSize int64 = 0
+	var completedSize int64
 	for completed := 0; completed < sliceCount; completed++ {
 		workResult := <-results
 		if workResult.err != nil {
 			abortConjoined(credentials, flags, conjoinedIdentifier)
-			log.Fatalf("Error in worker %d %s %s\n", workResult.workerId,
+			log.Fatalf("Error in worker %d %s %s\n", workResult.workerID,
 				workResult.err, workResult.action)
 		}
 		completedSize += workResult.size
 		completedPercent := int(
 			float64(completedSize) / float64(info.Size()) * 100.0)
 		log.Printf("worker %d completed conjoinedPart %d %d%%",
-			workResult.workerId, workResult.conjoinedPart, completedPercent)
+			workResult.workerID, workResult.conjoinedPart, completedPercent)
 	}
 	close(work)
 	close(results)

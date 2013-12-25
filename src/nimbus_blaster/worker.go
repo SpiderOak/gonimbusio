@@ -1,3 +1,7 @@
+/*blaster
+
+  A program to upload large files to nimbus.io in parallel as conjoined archive
+*/
 package main
 
 import (
@@ -6,7 +10,7 @@ import (
 	"os"
 )
 
-type WorkUnit struct {
+type workUnit struct {
 	collection          string
 	key                 string
 	conjoinedIdentifier string
@@ -15,8 +19,8 @@ type WorkUnit struct {
 	size                int64
 }
 
-type WorkResult struct {
-	workerId      int
+type workResult struct {
+	workerID      int
 	conjoinedPart int
 	size          int64
 	err           error
@@ -24,9 +28,9 @@ type WorkResult struct {
 }
 
 func worker(id int, filePath string, requester nimbusapi.Requester,
-	work <-chan WorkUnit, results chan<- WorkResult) {
-	result := WorkResult{}
-	result.workerId = id
+	work <-chan workUnit, results chan<- workResult) {
+	result := workResult{}
+	result.workerID = id
 
 	file, err := os.Open(filePath)
 	if err != nil {

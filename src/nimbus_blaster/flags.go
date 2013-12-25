@@ -1,3 +1,7 @@
+/*blaster
+
+  A program to upload large files to nimbus.io in parallel as conjoined archive
+*/
 package main
 
 import (
@@ -5,7 +9,7 @@ import (
 	"fmt"
 )
 
-type Flags struct {
+type flags struct {
 	credentialsPath string
 	filePath        string
 	collection      string
@@ -19,7 +23,7 @@ const (
 	defaultConnections = 5
 )
 
-func loadFlags() (Flags, error) {
+func loadflags() (flags, error) {
 	credp := flag.String("credentials", "", "path to credentials file")
 	fp := flag.String("file-path", "", "path of file to be archived")
 	colp := flag.String("collection", "", "collection name")
@@ -31,11 +35,11 @@ func loadFlags() (Flags, error) {
 	flag.Parse()
 
 	if *fp == "" {
-		return Flags{}, fmt.Errorf(
-			"You must specify the path to a file to be archived")
+		return flags{}, fmt.Errorf(
+			"you must specify the path to a file to be archived")
 	}
 	if *keyp == "" {
-		return Flags{}, fmt.Errorf("You must specify a key")
+		return flags{}, fmt.Errorf("you must specify a key")
 	}
 	if *sp == 0 {
 		*sp = defaultSliceSize
@@ -44,5 +48,5 @@ func loadFlags() (Flags, error) {
 		*hp = defaultConnections
 	}
 
-	return Flags{*credp, *fp, *colp, *keyp, *sp, *hp}, nil
+	return flags{*credp, *fp, *colp, *keyp, *sp, *hp}, nil
 }
