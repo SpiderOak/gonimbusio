@@ -1,3 +1,5 @@
+/*Package nimbusapi provides go routines to access the nimbus.io REST API
+ */
 package nimbusapi
 
 import (
@@ -22,6 +24,7 @@ type client struct {
 	servicePort   int
 }
 
+// Requester interface declares methods needed for HTTP requests to nimbus.io
 type Requester interface {
 	DefaultHostName() string
 	CollectionHostName(collectionName string) string
@@ -30,6 +33,7 @@ type Requester interface {
 	Do(*http.Request) (*http.Response, error)
 }
 
+// NewRequester returns an enitity that implements the Requester interface
 func NewRequester(credentials *Credentials) (Requester, error) {
 	serviceDomain := os.Getenv("NIMBUS_IO_SERVICE_DOMAIN")
 	if serviceDomain == "" {
@@ -81,8 +85,8 @@ func (client *client) CollectionHostName(collectionName string) string {
 func (client *client) CreateRequest(method string, hostName string, path string,
 	body io.Reader) (*http.Request, error) {
 
-	current_time := time.Now()
-	timestamp := current_time.Unix()
+	currentTime := time.Now()
+	timestamp := currentTime.Unix()
 	uri := fmt.Sprintf("%s://%s%s", client.protocol, hostName, path)
 
 	request, err := http.NewRequest(method, uri, body)

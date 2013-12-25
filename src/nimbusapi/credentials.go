@@ -1,3 +1,5 @@
+/*Package nimbusapi provides go routines to access the nimbus.io REST API
+ */
 package nimbusapi
 
 import (
@@ -12,17 +14,19 @@ import (
 	"strings"
 )
 
+// Credentials are a user's nimbus.io credentials
 type Credentials struct {
 	Name      string
-	AuthKeyId int
+	AuthKeyID int
 	AuthKey   []byte
 }
 
 const credentialsFileName = ".nimbus.io"
 
+// Equal returns true if two sets of credentials are the same
 func (credentials *Credentials) Equal(other *Credentials) bool {
 	return credentials.Name == other.Name &&
-		credentials.AuthKeyId == other.AuthKeyId &&
+		credentials.AuthKeyID == other.AuthKeyID &&
 		bytes.Equal(credentials.AuthKey, other.AuthKey)
 }
 
@@ -45,10 +49,10 @@ func loadCredentials(reader io.Reader) (*Credentials, error) {
 		return nil, err
 	}
 	fields = strings.Fields(line)
-	if len(fields) != 2 || fields[0] != "AuthKeyId" {
-		return nil, errors.New("can't parse AuthKeyId")
+	if len(fields) != 2 || fields[0] != "AuthKeyID" {
+		return nil, errors.New("can't parse AuthKeyID")
 	}
-	credentials.AuthKeyId, err = strconv.Atoi(fields[1])
+	credentials.AuthKeyID, err = strconv.Atoi(fields[1])
 	if err != nil {
 		return nil, err
 	}
@@ -66,6 +70,7 @@ func loadCredentials(reader io.Reader) (*Credentials, error) {
 	return &credentials, nil
 }
 
+// LoadCredentialsFromPath loads Credentials from a file at a specified path
 func LoadCredentialsFromPath(path string) (*Credentials, error) {
 	file, err := os.Open(path)
 	if err != nil {
@@ -75,6 +80,8 @@ func LoadCredentialsFromPath(path string) (*Credentials, error) {
 	return loadCredentials(file)
 }
 
+// LoadCredentialsFromDefault loads Credentials from a file at a default
+// location
 func LoadCredentialsFromDefault() (*Credentials, error) {
 	userRec, err := user.Current()
 	if err != nil {

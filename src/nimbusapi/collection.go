@@ -1,3 +1,5 @@
+/*Package nimbusapi provides go routines to access the nimbus.io REST API
+ */
 package nimbusapi
 
 import (
@@ -8,12 +10,14 @@ import (
 	"net/url"
 )
 
+// Collection represents JSON data returned by nimbus.io collection queries
 type Collection struct {
 	Name         string `json:"name"`
 	CreationTime string `json:"creation-time"`
 	Versioned    bool   `json:"versioning"`
 }
 
+// Key represents JSON data returned by nimbus.io key queries
 type Key struct {
 	Name              string `json:"key"`
 	TimeStamp         string `json:"timestamp"`
@@ -30,15 +34,20 @@ const (
 	reservedCollectionPrefix = "rr"
 )
 
+// DefaultCollectionName returns the name of the user's default colection
 func DefaultCollectionName(username string) string {
 	return fmt.Sprintf("%s-%s", defaultCollectionPrefix, username)
 }
 
+// ReservedCollectionName returns the name of a collection guaranteed to be
+// unique for the user
 func ReservedCollectionName(username string, collectionName string) string {
 	return fmt.Sprintf("%s-%s-%s", reservedCollectionPrefix, username,
 		collectionName)
 }
 
+// ListCollections returns a slice of Collection structs, listing all
+// collections owned by the user
 func ListCollections(requester Requester, userName string) (
 	[]Collection, error) {
 
@@ -77,6 +86,7 @@ func ListCollections(requester Requester, userName string) (
 	return result, nil
 }
 
+// CreateCollection creates a new collection for the user
 func CreateCollection(requester Requester, userName string,
 	collectionName string) (*Collection, error) {
 
@@ -116,6 +126,8 @@ func CreateCollection(requester Requester, userName string,
 	return &collection, nil
 }
 
+// ListKeysInCollection retruns a slice of Key structs, listing all keys in
+// the collection
 func ListKeysInCollection(requester Requester, collectionName string) (
 	[]Key, bool, error) {
 
@@ -154,6 +166,8 @@ func ListKeysInCollection(requester Requester, collectionName string) (
 	return listResult.KeySlice, listResult.Truncated, nil
 }
 
+// ListVersionsInCollection retruns a slice of Key structs, listing all versions
+// that are visible in the collection, limited by prefix
 func ListVersionsInCollection(requester Requester, collectionName string,
 	prefix string) (
 	[]Key, bool, error) {
@@ -201,6 +215,7 @@ func ListVersionsInCollection(requester Requester, collectionName string,
 	return listResult.KeySlice, listResult.Truncated, nil
 }
 
+// DeleteCollection removes a collection from the user with all associated keys
 func DeleteCollection(requester Requester, userName string,
 	collectionName string) (bool, error) {
 

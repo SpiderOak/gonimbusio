@@ -1,3 +1,5 @@
+/*Package nimbusapi provides go routines to access the nimbus.io REST API
+ */
 package nimbusapi
 
 import (
@@ -10,6 +12,8 @@ import (
 	"strconv"
 )
 
+// StartConjoined starts a conjoined archive, returning a token that can be
+// used to identify individual file uploads
 func StartConjoined(requester Requester, collectionName string, key string) (
 	string, error) {
 	method := "POST"
@@ -49,6 +53,7 @@ func StartConjoined(requester Requester, collectionName string, key string) (
 	return conjoinedMap["conjoined_identifier"], nil
 }
 
+// AbortConjoined aborts a conjoined archive
 func AbortConjoined(requester Requester, collectionName string, key string,
 	conjoinedIdentifier string) error {
 	method := "POST"
@@ -92,6 +97,8 @@ func AbortConjoined(requester Requester, collectionName string, key string,
 
 	return nil
 }
+
+// FinishConjoined marks a conjoined archive as completed
 func FinishConjoined(requester Requester, collectionName string, key string,
 	conjoinedIdentifier string) error {
 	method := "POST"
@@ -136,11 +143,13 @@ func FinishConjoined(requester Requester, collectionName string, key string,
 	return nil
 }
 
+// ConjoinedParams contains optional arguments to Key.Archive
 type ConjoinedParams struct {
 	ConjoinedIdentifier string
 	ConjoinedPart       int
 }
 
+// Archive uploads the data from requestBody
 func Archive(requester Requester, collectionName string, key string,
 	conjoinedParams *ConjoinedParams, contentLength int64,
 	requestBody io.Reader) (string, error) {
@@ -189,6 +198,7 @@ func Archive(requester Requester, collectionName string, key string,
 	return versionMap["version_identifier"], nil
 }
 
+// RetrieveParams contains optional arguments to Key.Retrieve
 type RetrieveParams struct {
 	VersionID       string
 	SliceOffset     int
@@ -197,6 +207,7 @@ type RetrieveParams struct {
 	UnmodifiedSince interface{}
 }
 
+// Retrieve fetches data from nimbus.io
 func Retrieve(requester Requester, collectionName string, key string,
 	retrieveParams RetrieveParams) (io.ReadCloser, error) {
 
@@ -253,17 +264,19 @@ func Retrieve(requester Requester, collectionName string, key string,
 
 	if retrieveParams.SliceSize > 0 && response.ContentLength != -1 &&
 		response.ContentLength != int64(retrieveParams.SliceSize) {
-		return nil, fmt.Errorf("ContentLength mismatch: expected %d found %d",
+		return nil, fmt.Errorf("content length mismatch: expected %d found %d",
 			retrieveParams.SliceSize, response.ContentLength)
 	}
 
 	return response.Body, nil
 }
 
+// DeleteKey deletes a Key, hiding all versions
 func DeleteKey(requester Requester, collectionName string, key string) error {
 	return DeleteVersion(requester, collectionName, key, "")
 }
 
+// DeleteVersion deletes a specific version of a Key
 func DeleteVersion(requester Requester, collectionName string, key string,
 	versionIdentifier string) error {
 	method := "DELETE"
