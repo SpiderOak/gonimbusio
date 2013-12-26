@@ -49,7 +49,7 @@ func loadCredentials(reader io.Reader) (*Credentials, error) {
 		return nil, err
 	}
 	fields = strings.Fields(line)
-	if len(fields) != 2 || fields[0] != "AuthKeyID" {
+	if len(fields) != 2 || fields[0] != "AuthKeyId" {
 		return nil, errors.New("can't parse AuthKeyID")
 	}
 	credentials.AuthKeyID, err = strconv.Atoi(fields[1])
