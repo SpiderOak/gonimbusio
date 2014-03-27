@@ -29,6 +29,10 @@ type listKeyResult struct {
 	KeySlice  []Key `json:"key_data"`
 }
 
+type setCollectionVersioningResult struct {
+	Success bool `json:"success"`
+}
+
 const (
 	defaultCollectionPrefix  = "dd"
 	reservedCollectionPrefix = "rr"
@@ -124,6 +128,57 @@ func CreateCollection(requester Requester, userName string,
 	}
 
 	return &collection, nil
+}
+
+// SetCollectionVersioning sets the boolean versioned attribute of the collection
+func SetCollectionVersioning(requester Requester, userName string,
+	collectionName string, versioned bool) error {
+
+	method := "PUT"
+	hostName := requester.DefaultHostName()
+	var versionedTag string
+	if versioned {
+		versionedTag = "True"
+	} else {
+		versionedTag = "False"
+	}
+	path := fmt.Sprintf("/customers/%s/collections/%s?versioning=%s",
+		userName, collectionName, versionedTag)
+
+	request, err := requester.CreateRequest(method, hostName, path, nil)
+	if err != nil {
+		return err
+	}
+
+	response, err := requester.Do(request)
+	if err != nil {
+		return err
+	}
+
+	if response.StatusCode != http.StatusOK {
+		err = fmt.Errorf("PUT %s %s failed (%d) %s", hostName, path,
+			response.StatusCode, response.Body)
+		return err
+	}
+
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+
+	var result setCollectionVersioningResult
+	err = json.Unmarshal(body, &result)
+	if err != nil {
+		return err
+	}
+
+	if !result.Success {
+		err = fmt.Errorf("PUT %s %s returned false", hostName, path)
+		return err
+	}
+
+	return nil
 }
 
 // ListKeysInCollection retruns a slice of Key structs, listing all keys in
